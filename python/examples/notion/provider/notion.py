@@ -1,4 +1,6 @@
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
+
 from dify_plugin.interfaces.datasource import DatasourceProvider
 
 
