@@ -1,5 +1,7 @@
+from collections.abc import Mapping
 from concurrent.futures import ThreadPoolExecutor
-from typing import Any, Mapping
+from typing import Any
+
 from dify_plugin.core.runtime import Session
 from dify_plugin.core.server.stdio.request_reader import StdioRequestReader
 from dify_plugin.core.server.stdio.response_writer import StdioResponseWriter
