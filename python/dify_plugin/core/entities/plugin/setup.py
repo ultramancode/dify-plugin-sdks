@@ -126,7 +126,8 @@ class PluginConfiguration(BaseModel):
         )
         datasources: list[str] = Field(
             default_factory=list,
-            description="manifest paths of datasource providers in yaml format, refers to [DatasourceProvider](#datasourceprovider)",
+            description="manifest paths of datasource providers in yaml format"
+            " refers to [DatasourceProvider](#datasourceprovider)",
         )
 
     @docs(
