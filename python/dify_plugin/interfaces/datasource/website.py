@@ -29,7 +29,7 @@ class WebsiteCrawlDatasource(ABC):
         self.runtime = runtime
         self.session = session
 
-    def get_website_crawl(self, datasource_parameters: Mapping[str, Any]) -> GetWebsiteCrawlResponse:
+    def website_crawl(self, datasource_parameters: Mapping[str, Any]) -> GetWebsiteCrawlResponse:
         """
         Get the website crawl result
         """

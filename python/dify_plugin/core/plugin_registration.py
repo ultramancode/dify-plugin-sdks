@@ -434,6 +434,42 @@ class PluginRegistration:
 
         return None
 
+    def get_datasource_provider_cls(self, provider: str):
+        """
+        get the datasource provider class by provider name
+        :param provider: provider name
+        :return: datasource provider class
+        """
+        if provider in self.datasource_mapping:
+            return self.datasource_mapping[provider].provider_cls
+        raise ValueError(f"Datasource provider {provider} not found")
+
+    def get_website_crawl_datasource_cls(self, provider: str, datasource: str):
+        """
+        get the website crawl datasource class by provider and datasource name
+        :param provider: provider name
+        :param datasource: datasource name
+        :return: website crawl datasource class
+        """
+        if provider in self.datasource_mapping:
+            result = self.datasource_mapping[provider].website_crawl_datasource_mapping.get(datasource)
+            if result:
+                return result
+        raise ValueError(f"Website crawl datasource {datasource} not found for provider {provider}")
+
+    def get_online_document_datasource_cls(self, provider: str, datasource: str):
+        """
+        get the online document datasource class by provider and datasource name
+        :param provider: provider name
+        :param datasource: datasource name
+        :return: online document datasource class
+        """
+        if provider in self.datasource_mapping:
+            result = self.datasource_mapping[provider].online_document_datasource_mapping.get(datasource)
+            if result:
+                return result
+        raise ValueError(f"Online document datasource {datasource} not found for provider {provider}")
+
     def dispatch_endpoint_request(self, request: Request) -> tuple[type[Endpoint], Mapping]:
         """
         dispatch endpoint request, match the request to the registered endpoints
