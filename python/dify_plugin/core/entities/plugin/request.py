@@ -22,6 +22,7 @@ class PluginInvokeType(StrEnum):
     Endpoint = "endpoint"
     Agent = "agent_strategy"
     OAuth = "oauth"
+    Datasource = "datasource"
 
 
 class AgentActions(StrEnum):
@@ -56,6 +57,13 @@ class EndpointActions(StrEnum):
 class OAuthActions(StrEnum):
     GetAuthorizationUrl = "get_authorization_url"
     GetCredentials = "get_credentials"
+
+
+class DatasourceActions(StrEnum):
+    ValidateCredentials = "validate_datasource_credentials"
+    InvokeWebsiteDatasourceGetCrawl = "invoke_website_datasource_get_crawl"
+    InvokeOnlineDocumentDatasourceGetPages = "invoke_online_document_datasource_get_pages"
+    InvokeOnlineDocumentDatasourceGetPageContent = "invoke_online_document_datasource_get_page_content"
 
 
 # merge all the access actions
