@@ -3,6 +3,7 @@ from typing import Optional, Union
 
 from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
+from dify_plugin.core.documentation.schema_doc import docs
 from dify_plugin.entities import I18nObject, ParameterAutoGenerate, ParameterOption, ParameterTemplate
 from dify_plugin.entities.oauth import OAuthSchema
 from dify_plugin.entities.provider_config import CommonParameterType, ProviderConfig
@@ -56,10 +57,26 @@ class DatasourceIdentity(BaseModel):
     icon: Optional[str] = None
 
 
+@docs(
+    name="DatasourceEntityExtra",
+    description="The extra of the datasource entity",
+)
+class DatasourceEntityExtra(BaseModel):
+    class Python(BaseModel):
+        source: str
+
+    python: Python
+
+
+@docs(
+    name="Datasource",
+    description="Datasource entity",
+)
 class DatasourceEntity(BaseModel):
     identity: DatasourceIdentity
     parameters: list[DatasourceParameter] = Field(default_factory=list)
     description: I18nObject = Field(..., description="The label of the datasource")
+    extra: DatasourceEntityExtra
 
     @field_validator("parameters", mode="before")
     @classmethod
@@ -67,6 +84,9 @@ class DatasourceEntity(BaseModel):
         return v or []
 
 
+@docs(
+    description="Identity of datasource provider",
+)
 class DatasourceProviderIdentity(BaseModel):
     author: str = Field(..., description="The author of the tool")
     name: str = Field(..., description="The name of the tool")
@@ -79,7 +99,23 @@ class DatasourceProviderIdentity(BaseModel):
     )
 
 
-class DatasourceProviderEntity(BaseModel):
+@docs(
+    name="DatasourceProviderExtra",
+    description="The extra of the datasource provider",
+)
+class DatasourceProviderConfigurationExtra(BaseModel):
+    class Python(BaseModel):
+        source: str
+
+    python: Python
+
+
+@docs(
+    name="DatasourceProvider",
+    description="Manifest of datasource providers",
+    outside_reference_fields={"datasources": DatasourceEntity},
+)
+class DatasourceProviderManifest(BaseModel):
     """
     Datasource provider entity
     """
@@ -88,7 +124,5 @@ class DatasourceProviderEntity(BaseModel):
     credentials_schema: list[ProviderConfig] = Field(default_factory=list)
     oauth_schema: Optional[OAuthSchema] = None
     provider_type: DatasourceProviderType
-
-
-class DatasourceProviderEntityWithPlugin(DatasourceProviderEntity):
     datasources: list[DatasourceEntity] = Field(default_factory=list)
+    extra: DatasourceProviderConfigurationExtra
