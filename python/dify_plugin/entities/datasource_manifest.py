@@ -66,7 +66,6 @@ class DatasourceIdentity(BaseModel):
     author: str = Field(..., description="The author of the datasource")
     name: str = Field(..., description="The name of the datasource")
     label: I18nObject = Field(..., description="The label of the datasource")
-    provider: str = Field(..., description="The provider of the datasource")
     icon: Optional[str] = None
 
 

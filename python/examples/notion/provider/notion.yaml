@@ -1,3 +1,16 @@
+identity:
+  author: "yeuoly"
+  name: "notion"
+  description:
+    zh_Hans: "Notion"
+    en_US: "Notion"
+  icon: "notion.svg"
+  label:
+    zh_Hans: "Notion"
+    en_US: "Notion"
+credentials_schema: []
+oauth_schema: null
+provider_type: "online_document"
 datasources:
   - datasources/notion.yaml
 extra:
