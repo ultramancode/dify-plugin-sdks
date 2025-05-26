@@ -1,6 +1,6 @@
+import urllib.parse
 from collections.abc import Mapping
 from typing import Any
-import urllib.parse
 
 import requests
 from werkzeug import Request
@@ -35,7 +35,7 @@ class NotionDatasourceProvider(DatasourceProvider):
         data = {"code": code, "grant_type": "authorization_code", "redirect_uri": system_credentials["redirect_uri"]}
         headers = {"Accept": "application/json"}
         auth = (system_credentials["client_id"], system_credentials["client_secret"])
-        response = requests.post(self._TOKEN_URL, data=data, auth=auth, headers=headers)
+        response = requests.post(self._TOKEN_URL, data=data, auth=auth, headers=headers, timeout=10)
         response_json = response.json()
         access_token = response_json.get("access_token")
         if not access_token:
