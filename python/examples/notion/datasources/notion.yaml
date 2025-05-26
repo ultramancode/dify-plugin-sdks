@@ -7,7 +7,6 @@ identity:
   label:
     zh_Hans: "Notion"
     en_US: "Notion"
-parameters: []
 description:
   zh_Hans: "Notion"
   en_US: "Notion"
