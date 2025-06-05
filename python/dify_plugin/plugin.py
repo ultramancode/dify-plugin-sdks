@@ -30,6 +30,8 @@ from dify_plugin.core.server.stdio.response_writer import StdioResponseWriter
 from dify_plugin.core.server.tcp.request_reader import TCPReaderWriter
 from dify_plugin.entities.tool import ToolInvokeMessage
 
+from dify_plugin.core.entities.plugin.request import DatasourceActions
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 logger.addHandler(plugin_logger_handler)
@@ -310,6 +312,31 @@ class Plugin(IOServer, Router):
             lambda data: data.get("type") == PluginInvokeType.Model.value
             and data.get("action") == ModelActions.GetAIModelSchemas.value,
         )
+
+        self.register_route(
+            self.plugin_executer.validate_datasource_credentials,
+            lambda data: data.get("type") == PluginInvokeType.Datasource.value
+            and data.get("action") == DatasourceActions.ValidateCredentials.value,
+        )
+
+        self.register_route(
+            self.plugin_executer.datasource_crawl_website,
+            lambda data: data.get("type") == PluginInvokeType.Datasource.value
+            and data.get("action") == DatasourceActions.InvokeWebsiteDatasourceGetCrawl.value,
+        )
+
+        self.register_route(
+            self.plugin_executer.datasource_get_page_content,
+            lambda data: data.get("type") == PluginInvokeType.Datasource.value
+            and data.get("action") == DatasourceActions.InvokeOnlineDocumentDatasourceGetPageContent.value,
+        )
+
+        self.register_route(
+            self.plugin_executer.datasource_get_pages,
+            lambda data: data.get("type") == PluginInvokeType.Datasource.value
+            and data.get("action") == DatasourceActions.InvokeOnlineDocumentDatasourceGetPages.value,
+        )
+
 
     def _execute_request(
         self,
