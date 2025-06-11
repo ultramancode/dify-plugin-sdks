@@ -1,12 +1,14 @@
 from abc import ABC, abstractmethod
-from collections.abc import Mapping
+from collections.abc import Mapping, Generator
 from typing import Any, final
 
+from dify_plugin.interfaces.tool import ToolLike
+
 from dify_plugin.core.runtime import Session
-from dify_plugin.entities.datasource import DatasourceRuntime, GetWebsiteCrawlResponse
+from dify_plugin.entities.datasource import DatasourceRuntime, DataSourceMessage
 
 
-class WebsiteCrawlDatasource(ABC):
+class WebsiteCrawlDatasource(ToolLike[DataSourceMessage]):
     """
     Website Crawl Datasource abstract class
     """
@@ -28,15 +30,16 @@ class WebsiteCrawlDatasource(ABC):
         """
         self.runtime = runtime
         self.session = session
+        self.response_type = DataSourceMessage
 
-    def website_crawl(self, datasource_parameters: Mapping[str, Any]) -> GetWebsiteCrawlResponse:
+    def website_crawl(self, datasource_parameters: Mapping[str, Any]) -> Generator[DataSourceMessage, None, None]:
         """
         Get the website crawl result
         """
         return self._get_website_crawl(datasource_parameters)
 
     @abstractmethod
-    def _get_website_crawl(self, datasource_parameters: Mapping[str, Any]) -> GetWebsiteCrawlResponse:
+    def _get_website_crawl(self, datasource_parameters: Mapping[str, Any]) -> Generator[DataSourceMessage, None, None]:
         """
         Get the website crawl result
         """

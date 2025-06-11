@@ -3,6 +3,8 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
+from dify_plugin.entities.invoke_message import InvokeMessage
+
 
 class DatasourceRuntime(BaseModel):
     credentials: Mapping[str, Any]
@@ -80,10 +82,5 @@ class OnlineDocumentPageContent(BaseModel):
     page_id: str = Field(..., description="The page id")
     content: str = Field(..., description="The content of the page")
 
-
-class GetOnlineDocumentPageContentResponse(BaseModel):
-    """
-    Get online document page content response
-    """
-
-    result: OnlineDocumentPageContent
+class DataSourceMessage(InvokeMessage):
+    pass

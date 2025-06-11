@@ -7,10 +7,10 @@ from pydantic import BaseModel, Field, field_validator
 from dify_plugin.core.documentation.schema_doc import docs
 from dify_plugin.core.utils.yaml_loader import load_yaml_file
 from dify_plugin.entities import I18nObject, ParameterAutoGenerate, ParameterOption, ParameterTemplate
+from dify_plugin.entities.invoke_message import InvokeMessage
 from dify_plugin.entities.tool import (
     CommonParameterType,
     ToolIdentity,
-    ToolInvokeMessage,
     ToolProviderIdentity,
 )
 
@@ -162,5 +162,5 @@ class AgentStrategyProviderConfiguration(BaseModel):
         return strategies
 
 
-class AgentInvokeMessage(ToolInvokeMessage):
+class AgentInvokeMessage(InvokeMessage):
     pass

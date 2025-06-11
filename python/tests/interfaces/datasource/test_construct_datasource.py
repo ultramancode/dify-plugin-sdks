@@ -1,4 +1,4 @@
-from collections.abc import Mapping
+from collections.abc import Mapping, Generator
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
@@ -8,10 +8,8 @@ from dify_plugin.core.server.stdio.response_writer import StdioResponseWriter
 from dify_plugin.entities.datasource import (
     DatasourceRuntime,
     GetOnlineDocumentPageContentRequest,
-    GetOnlineDocumentPageContentResponse,
     GetOnlineDocumentPagesResponse,
-    GetWebsiteCrawlResponse,
-    OnlineDocumentPageContent,
+    DataSourceMessage,
 )
 from dify_plugin.interfaces.datasource.online_document import OnlineDocumentDatasource
 from dify_plugin.interfaces.datasource.website import WebsiteCrawlDatasource
@@ -23,8 +21,13 @@ def test_construct_website_crawl_datasource():
     """
 
     class Website(WebsiteCrawlDatasource):
-        def _get_website_crawl(self, datasource_parameters: Mapping[str, Any]) -> GetWebsiteCrawlResponse:
-            return GetWebsiteCrawlResponse(result=[])
+        def _get_website_crawl(self, datasource_parameters: Mapping[str, Any]) -> Generator[DataSourceMessage, None, None]:
+            yield DataSourceMessage(
+                type=DataSourceMessage.MessageType.TEXT,
+                message=DataSourceMessage.TextMessage(
+                    text=f"Website crawl result for {datasource_parameters.get('url', 'unknown')}"
+                )
+            )
 
     session = Session(
         session_id="test",
@@ -45,12 +48,11 @@ def test_construct_online_document_datasource():
         def _get_pages(self, datasource_parameters: Mapping[str, Any]) -> GetOnlineDocumentPagesResponse:
             return GetOnlineDocumentPagesResponse(result=[])
 
-        def _get_content(self, page: GetOnlineDocumentPageContentRequest) -> GetOnlineDocumentPageContentResponse:
-            return GetOnlineDocumentPageContentResponse(
-                result=OnlineDocumentPageContent(
-                    workspace_id="test",
-                    page_id="test",
-                    content="test",
+        def _get_content(self, page: GetOnlineDocumentPageContentRequest) -> Generator[DataSourceMessage, None, None]:
+            yield DataSourceMessage(
+                type=DataSourceMessage.MessageType.TEXT,
+                message=DataSourceMessage.TextMessage(
+                    text=f"Online document page content for {page.workspace_id} - {page.page_id}"
                 )
             )
 

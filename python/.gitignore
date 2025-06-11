@@ -93,3 +93,11 @@ cython_debug/
 pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python
+
+
+# IDEA
+.idea
+
+
+# IDEA
+.idea

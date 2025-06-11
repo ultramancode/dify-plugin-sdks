@@ -1,13 +1,12 @@
 from abc import ABC, abstractmethod
-from collections.abc import Mapping
+from collections.abc import Mapping, Generator
 from typing import Any, final
 
 from dify_plugin.core.runtime import Session
 from dify_plugin.entities.datasource import (
     DatasourceRuntime,
     GetOnlineDocumentPageContentRequest,
-    GetOnlineDocumentPageContentResponse,
-    GetOnlineDocumentPagesResponse,
+    GetOnlineDocumentPagesResponse, DataSourceMessage,
 )
 
 
@@ -47,14 +46,14 @@ class OnlineDocumentDatasource(ABC):
         """
         raise NotImplementedError("This method should be implemented by a subclass")
 
-    def get_content(self, page: GetOnlineDocumentPageContentRequest) -> GetOnlineDocumentPageContentResponse:
+    def get_content(self, page: GetOnlineDocumentPageContentRequest) -> Generator[DataSourceMessage, None, None]:
         """
         Get the content
         """
         return self._get_content(page)
 
     @abstractmethod
-    def _get_content(self, page: GetOnlineDocumentPageContentRequest) -> GetOnlineDocumentPageContentResponse:
+    def _get_content(self, page: GetOnlineDocumentPageContentRequest) -> Generator[DataSourceMessage, None, None]:
         """
         Get the content
         """
