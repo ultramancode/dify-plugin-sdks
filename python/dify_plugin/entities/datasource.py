@@ -72,15 +72,5 @@ class GetOnlineDocumentPageContentRequest(BaseModel):
     page_id: str = Field(..., description="The page id")
     type: str = Field(..., description="The type of the page")
 
-
-class OnlineDocumentPageContent(BaseModel):
-    """
-    Online document page content
-    """
-
-    workspace_id: str = Field(..., description="The workspace id")
-    page_id: str = Field(..., description="The page id")
-    content: str = Field(..., description="The content of the page")
-
 class DataSourceMessage(InvokeMessage):
     pass
