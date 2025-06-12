@@ -21,7 +21,6 @@ class WebSiteInfo(BaseModel):
     """
     Website info
     """
-    job_id: Optional[str] = Field(..., description="crawl job id")
     status: Optional[str] = Field(..., description="crawl job status")
     web_info_list: Optional[list[WebSiteInfoDetail]] = []
 
@@ -29,7 +28,7 @@ class GetWebsiteCrawlResponse(BaseModel):
     """
     Get website crawl response
     """
-    result: list[WebSiteInfo]
+    result: WebSiteInfo
 
 class OnlineDocumentPage(BaseModel):
     """
