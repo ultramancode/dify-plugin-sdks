@@ -23,8 +23,8 @@ class WebSiteInfo(BaseModel):
     """
     status: Optional[str] = Field(..., description="crawl job status")
     web_info_list: Optional[list[WebSiteInfoDetail]] = []
-    total: Optional[int] = Field(..., description="The total number of websites")
-    completed: Optional[int] = Field(..., description="The number of completed websites")
+    total: Optional[int] = Field(default=0, description="The total number of websites")
+    completed: Optional[int] = Field(default=0, description="The number of completed websites")
 
 class GetWebsiteCrawlResponse(BaseModel):
     """
