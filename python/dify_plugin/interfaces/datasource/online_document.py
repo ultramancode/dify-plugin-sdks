@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from collections.abc import Mapping, Generator
 from typing import Any, final
 
@@ -6,9 +6,13 @@ from dify_plugin.core.runtime import Session
 from dify_plugin.entities.datasource import (
     DatasourceRuntime,
     GetOnlineDocumentPageContentRequest,
-    OnlineDocumentPageMessage, DataSourceMessage,
+    OnlineDocumentPagesMessage, DataSourceMessage, OnlineDocumentInfo,
 )
 from dify_plugin.interfaces.tool import ToolLike
+
+
+def create_pages_message(pages: list[OnlineDocumentInfo]) -> OnlineDocumentPagesMessage:
+    return OnlineDocumentPagesMessage(result=pages)
 
 
 class OnlineDocumentDatasource(ToolLike[DataSourceMessage]):
@@ -35,14 +39,14 @@ class OnlineDocumentDatasource(ToolLike[DataSourceMessage]):
         self.session = session
         self.response_type = DataSourceMessage
 
-    def get_pages(self, datasource_parameters: Mapping[str, Any]) -> Generator[OnlineDocumentPageMessage, None, None]:
+    def get_pages(self, datasource_parameters: Mapping[str, Any]) -> Generator[OnlineDocumentPagesMessage, None, None]:
         """
         Get the pages
         """
         return self._get_pages(datasource_parameters)
 
     @abstractmethod
-    def _get_pages(self, datasource_parameters: Mapping[str, Any]) ->  Generator[OnlineDocumentPageMessage, None, None]:
+    def _get_pages(self, datasource_parameters: Mapping[str, Any]) ->  Generator[OnlineDocumentPagesMessage, None, None]:
         """
         Get the pages
         """

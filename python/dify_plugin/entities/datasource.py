@@ -56,7 +56,7 @@ class OnlineDocumentInfo(BaseModel):
     pages: list[OnlineDocumentPage] = Field(..., description="The pages of the online document")
 
 
-class OnlineDocumentPageMessage(BaseModel):
+class OnlineDocumentPagesMessage(BaseModel):
     """
     Get online document pages response
     """

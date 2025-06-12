@@ -3,7 +3,11 @@ from collections.abc import Mapping, Generator
 from typing import Any, final
 
 from dify_plugin.core.runtime import Session
-from dify_plugin.entities.datasource import DatasourceRuntime, DataSourceMessage, WebsiteCrawlMessage
+from dify_plugin.entities.datasource import DatasourceRuntime, WebsiteCrawlMessage, WebSiteInfo
+
+
+def create_crawl_message(website_info: WebSiteInfo) -> WebsiteCrawlMessage:
+    return WebsiteCrawlMessage(result=website_info)
 
 
 class WebsiteCrawlDatasource(ABC):
