@@ -99,5 +99,6 @@ pyrightconfig.json
 .idea
 
 
-# IDEA
-.idea
+# for plugin development
+# Ignore all files in the plugins directory
+plugins

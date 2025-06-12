@@ -26,7 +26,7 @@ class WebSiteInfo(BaseModel):
     total: Optional[int] = Field(default=0, description="The total number of websites")
     completed: Optional[int] = Field(default=0, description="The number of completed websites")
 
-class GetWebsiteCrawlResponse(BaseModel):
+class WebsiteCrawlMessage(BaseModel):
     """
     Get website crawl response
     """
@@ -56,7 +56,7 @@ class OnlineDocumentInfo(BaseModel):
     pages: list[OnlineDocumentPage] = Field(..., description="The pages of the online document")
 
 
-class GetOnlineDocumentPagesResponse(BaseModel):
+class OnlineDocumentPageMessage(BaseModel):
     """
     Get online document pages response
     """
