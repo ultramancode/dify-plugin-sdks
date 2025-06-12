@@ -11,9 +11,6 @@ from dify_plugin.entities.datasource import (
 from dify_plugin.interfaces.tool import ToolLike
 
 
-def create_pages_message(pages: list[OnlineDocumentInfo]) -> OnlineDocumentPagesMessage:
-    return OnlineDocumentPagesMessage(result=pages)
-
 
 class OnlineDocumentDatasource(ToolLike[DataSourceMessage]):
     """
@@ -38,6 +35,10 @@ class OnlineDocumentDatasource(ToolLike[DataSourceMessage]):
         self.runtime = runtime
         self.session = session
         self.response_type = DataSourceMessage
+
+    @classmethod
+    def create_pages_message(cls, pages: list[OnlineDocumentInfo]) -> OnlineDocumentPagesMessage:
+        return OnlineDocumentPagesMessage(result=pages)
 
     def get_pages(self, datasource_parameters: Mapping[str, Any]) -> Generator[OnlineDocumentPagesMessage, None, None]:
         """
