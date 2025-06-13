@@ -36,8 +36,7 @@ class OnlineDocumentDatasource(ToolLike[DataSourceMessage]):
         self.session = session
         self.response_type = DataSourceMessage
 
-    @classmethod
-    def create_pages_message(cls, pages: list[OnlineDocumentInfo]) -> OnlineDocumentPagesMessage:
+    def create_pages_message(self, pages: list[OnlineDocumentInfo]) -> OnlineDocumentPagesMessage:
         return OnlineDocumentPagesMessage(result=pages)
 
     def get_pages(self, datasource_parameters: Mapping[str, Any]) -> Generator[OnlineDocumentPagesMessage, None, None]:

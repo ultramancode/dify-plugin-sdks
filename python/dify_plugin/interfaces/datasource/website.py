@@ -29,8 +29,7 @@ class WebsiteCrawlDatasource(ABC):
         self.runtime = runtime
         self.session = session
 
-    @classmethod
-    def create_crawl_message(cls, website_info: WebSiteInfo) -> WebsiteCrawlMessage:
+    def create_crawl_message(self, website_info: WebSiteInfo) -> WebsiteCrawlMessage:
         return WebsiteCrawlMessage(result=website_info)
 
     def website_crawl(self, datasource_parameters: Mapping[str, Any]) -> Generator[WebsiteCrawlMessage, None, None]:
