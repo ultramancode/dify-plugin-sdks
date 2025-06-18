@@ -42,6 +42,7 @@ class OnlineDocumentPage(BaseModel):
     page_icon: Optional[dict] = Field(None, description="The page icon")
     type: str = Field(..., description="The type of the page")
     last_edited_time: str = Field(..., description="The last edited time")
+    parent_id: Optional[str] = Field(None, description="The parent page id")
 
 
 class OnlineDocumentInfo(BaseModel):
