@@ -39,7 +39,7 @@ class NotionDataSource(OnlineDocumentDatasource):
             pages=pages,
             total=len(pages),
         )
-        print(online_document_info)
+        print(datasource_parameters)
         yield self.create_pages_message(pages = [online_document_info])
 
 
@@ -59,7 +59,12 @@ class NotionDataSource(OnlineDocumentDatasource):
             online_document_res = notion_extractor.extract()
         except Exception as e:
             raise ValueError(str(e))
-        return online_document_res
+        print(online_document_res)
+        yield self.create_variable_message("page_id", online_document_res['page_id'])
+        yield self.create_variable_message("content", online_document_res['content'])
+        yield self.create_variable_message("workspace_id", online_document_res['workspace_id'])
+
+
 
     def notion_workspace_name(self, access_token: str):
         headers = {

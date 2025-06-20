@@ -7,6 +7,8 @@ import requests
 import time
 from typing import Any, Dict, List, Optional, Union
 
+from dify_plugin.entities.datasource import OnlineDocumentPage
+
 
 class NotionClient:
     """
@@ -493,14 +495,13 @@ class NotionClient:
                 parent_id = "root"
             else:
                 parent_id = parent[parent_type]
-            page = {
-                "page_id": page_id,
-                "page_title": page_name,
-                "page_icon": icon,
-                "parent_id": parent_id,
-                "type": "page",
-                "last_edited_time": page_result["last_edited_time"]
-            }
+            page = OnlineDocumentPage(page_id=page_id,
+                                      page_name=page_name,
+                                      page_icon=icon,
+                                      parent_id=parent_id,
+                                      type="page",
+                                      last_edited_time=page_result["last_edited_time"]
+                                     )
             pages.append(page)
             # get database detail
         for database_result in database_results:
@@ -535,14 +536,13 @@ class NotionClient:
                 parent_id = "root"
             else:
                 parent_id = parent[parent_type]
-            page = {
-                "page_id": page_id,
-                "page_name": page_name,
-                "page_icon": icon,
-                "parent_id": parent_id,
-                "type": "database",
-                "last_edited_time": database_result["last_edited_time"]
-            }
+            page = OnlineDocumentPage(page_id=page_id,
+                                      page_name=page_name,
+                                      page_icon=icon,
+                                      parent_id=parent_id,
+                                      type="database",
+                                      last_edited_time=database_result["last_edited_time"]
+                                     )
             pages.append(page)
         return pages
 
