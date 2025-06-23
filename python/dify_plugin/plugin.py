@@ -16,6 +16,7 @@ from dify_plugin.core.entities.plugin.request import (
     ModelActions,
     PluginInvokeType,
     ToolActions,
+    OAuthActions,
 )
 from dify_plugin.core.plugin_executor import PluginExecutor
 from dify_plugin.core.plugin_registration import PluginRegistration
@@ -337,6 +338,17 @@ class Plugin(IOServer, Router):
             and data.get("action") == DatasourceActions.InvokeOnlineDocumentDatasourceGetPages.value,
         )
 
+        self.register_route(
+            self.plugin_executer.get_oauth_authorization_url,
+            lambda data: data.get("type") == PluginInvokeType.OAuth.value
+            and data.get("action") == OAuthActions.GetAuthorizationUrl.value,
+        )
+
+        self.register_route(
+            self.plugin_executer.get_oauth_credentials,
+            lambda data: data.get("type") == PluginInvokeType.OAuth.value
+            and data.get("action") == OAuthActions.GetCredentials.value,
+        )
 
     def _execute_request(
         self,

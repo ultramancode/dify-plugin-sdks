@@ -336,10 +336,7 @@ class PluginExecutor:
         if provider_cls is None:
             raise ValueError(f"Provider `{provider}` does not support OAuth")
 
-        if provider_cls == ToolProvider:
-            return provider_cls()
-
-        raise ValueError(f"Provider `{provider}` does not support OAuth")
+        return provider_cls()
 
     def get_oauth_authorization_url(self, session: Session, data: OAuthGetAuthorizationUrlRequest):
         provider_instance = self._get_oauth_provider_instance(data.provider)

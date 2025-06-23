@@ -6,7 +6,7 @@ from dify_plugin.entities.datasource import (
     OnlineDocumentPagesMessage,
     DataSourceMessage, OnlineDocumentPage, OnlineDocumentInfo,
 )
-from dify_plugin.interfaces.datasource.online_document import OnlineDocumentDatasource, create_pages_message
+from dify_plugin.interfaces.datasource.online_document import OnlineDocumentDatasource
 
 
 class NotionDatasource(OnlineDocumentDatasource):
@@ -15,7 +15,7 @@ class NotionDatasource(OnlineDocumentDatasource):
     _NOTION_BOT_USER = "https://api.notion.com/v1/users/me"
 
     def _get_pages(self, datasource_parameters: Mapping[str, Any]) -> Generator[OnlineDocumentPagesMessage, None, None]:
-        yield create_pages_message(
+        yield self.create_pages_message(
             pages=[
                 OnlineDocumentInfo(
                     workspace_id=datasource_parameters["workspace_id"],
