@@ -1,14 +1,40 @@
-from enum import StrEnum
+from enum import Enum, StrEnum
 from typing import Optional, Union
 
 from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
 from dify_plugin.core.documentation.schema_doc import docs
 from dify_plugin.core.utils.yaml_loader import load_yaml_file
-from dify_plugin.entities import I18nObject, ParameterAutoGenerate, ParameterOption, ParameterTemplate
+from dify_plugin.entities import (
+    I18nObject,
+    ParameterAutoGenerate,
+    ParameterOption,
+    ParameterTemplate,
+)
 from dify_plugin.entities.oauth import OAuthSchema
 from dify_plugin.entities.provider_config import CommonParameterType, ProviderConfig
-from dify_plugin.entities.tool import ToolLabelEnum
+
+
+@docs(
+    description="The label of the datasource",
+)
+class DatasourceLabelEnum(Enum):
+    SEARCH = "search"
+    IMAGE = "image"
+    VIDEOS = "videos"
+    WEATHER = "weather"
+    FINANCE = "finance"
+    DESIGN = "design"
+    TRAVEL = "travel"
+    SOCIAL = "social"
+    NEWS = "news"
+    MEDICAL = "medical"
+    PRODUCTIVITY = "productivity"
+    EDUCATION = "education"
+    BUSINESS = "business"
+    ENTERTAINMENT = "entertainment"
+    UTILITIES = "utilities"
+    OTHER = "other"
 
 
 @docs(
@@ -100,14 +126,14 @@ class DatasourceEntity(BaseModel):
     description="Identity of datasource provider",
 )
 class DatasourceProviderIdentity(BaseModel):
-    author: str = Field(..., description="The author of the tool")
-    name: str = Field(..., description="The name of the tool")
-    description: I18nObject = Field(..., description="The description of the tool")
-    icon: str = Field(..., description="The icon of the tool")
-    label: I18nObject = Field(..., description="The label of the tool")
-    tags: Optional[list[ToolLabelEnum]] = Field(
+    author: str = Field(..., description="The author of the datasource")
+    name: str = Field(..., description="The name of the datasource")
+    description: I18nObject = Field(..., description="The description of the datasource")
+    icon: str = Field(..., description="The icon of the datasource")
+    label: I18nObject = Field(..., description="The label of the datasource")
+    tags: Optional[list[DatasourceLabelEnum]] = Field(
         default=[],
-        description="The tags of the tool",
+        description="The tags of the datasource",
     )
 
 

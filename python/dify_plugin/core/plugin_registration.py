@@ -43,6 +43,7 @@ class DatasourceProviderMapping:
     """
 
     provider: str
+    configuration: DatasourceProviderManifest
     provider_cls: type[DatasourceProvider]
 
     website_crawl_datasource_mapping: Mapping[str, type[WebsiteCrawlDatasource]]
@@ -52,11 +53,13 @@ class DatasourceProviderMapping:
         self,
         provider: str,
         provider_cls: type[DatasourceProvider],
+        configuration: DatasourceProviderManifest,
         website_crawl_datasource_mapping: Mapping[str, type[WebsiteCrawlDatasource]] | None = None,
         online_document_datasource_mapping: Mapping[str, type[OnlineDocumentDatasource]] | None = None,
     ) -> None:
         self.provider = provider
         self.provider_cls = provider_cls
+        self.configuration = configuration
         self.website_crawl_datasource_mapping = website_crawl_datasource_mapping or {}
         self.online_document_datasource_mapping = online_document_datasource_mapping or {}
 
@@ -258,6 +261,7 @@ class PluginRegistration:
             self.datasource_mapping[provider.identity.name] = DatasourceProviderMapping(
                 provider=provider.identity.name,
                 provider_cls=provider_cls,
+                configuration=provider,
                 website_crawl_datasource_mapping=datasource_mappings[DatasourceProviderType.WEBSITE_CRAWL][1],
                 online_document_datasource_mapping=datasource_mappings[DatasourceProviderType.ONLINE_DOCUMENT][1],
             )
@@ -431,6 +435,11 @@ class PluginRegistration:
         for provider_registration in self.tools_mapping:
             if provider_registration == provider and self.tools_mapping[provider_registration][0].oauth_schema:
                 return self.tools_mapping[provider_registration][1]
+
+        if provider in self.datasource_mapping:
+            datasource = self.datasource_mapping[provider]
+            if datasource.configuration.oauth_schema:
+                return datasource.provider_cls
 
         return None
 
