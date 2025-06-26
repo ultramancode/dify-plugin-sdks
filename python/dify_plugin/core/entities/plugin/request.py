@@ -249,6 +249,7 @@ class OAuthGetAuthorizationUrlRequest(PluginAccessRequest):
     type: PluginInvokeType = PluginInvokeType.OAuth
     action: OAuthActions = OAuthActions.GetAuthorizationUrl
     provider: str
+    redirect_uri: str
     system_credentials: Mapping[str, Any]
 
 
@@ -256,6 +257,7 @@ class OAuthGetCredentialsRequest(PluginAccessRequest):
     type: PluginInvokeType = PluginInvokeType.OAuth
     action: OAuthActions = OAuthActions.GetCredentials
     provider: str
+    redirect_uri: str
     system_credentials: Mapping[str, Any]
     raw_http_request: str
 

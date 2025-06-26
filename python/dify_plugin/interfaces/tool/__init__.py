@@ -6,7 +6,13 @@ from werkzeug import Request
 
 from dify_plugin.core.runtime import Session
 from dify_plugin.entities.invoke_message import InvokeMessage
-from dify_plugin.entities.tool import LogMetadata, ToolInvokeMessage, ToolParameter, ToolRuntime, ToolSelector
+from dify_plugin.entities.tool import (
+    LogMetadata,
+    ToolInvokeMessage,
+    ToolParameter,
+    ToolRuntime,
+    ToolSelector,
+)
 from dify_plugin.file.constants import DIFY_FILE_IDENTITY, DIFY_TOOL_SELECTOR_IDENTITY
 from dify_plugin.file.entities import FileType
 from dify_plugin.file.file import File
@@ -231,16 +237,20 @@ class ToolProvider:
     def _validate_credentials(self, credentials: dict):
         raise NotImplementedError("This method should be implemented by a subclass")
 
-    def oauth_get_authorization_url(self, system_credentials: Mapping[str, Any]) -> str:
-        return self._oauth_get_authorization_url(system_credentials)
+    def oauth_get_authorization_url(self, redirect_uri: str, system_credentials: Mapping[str, Any]) -> str:
+        return self._oauth_get_authorization_url(redirect_uri, system_credentials)
 
-    def _oauth_get_authorization_url(self, system_credentials: Mapping[str, Any]) -> str:
+    def _oauth_get_authorization_url(self, redirect_uri: str, system_credentials: Mapping[str, Any]) -> str:
         raise NotImplementedError("This method should be implemented by a subclass")
 
-    def oauth_get_credentials(self, system_credentials: Mapping[str, Any], request: Request) -> Mapping[str, Any]:
-        return self._oauth_get_credentials(system_credentials, request)
+    def oauth_get_credentials(
+        self, redirect_uri: str, system_credentials: Mapping[str, Any], request: Request
+    ) -> Mapping[str, Any]:
+        return self._oauth_get_credentials(redirect_uri, system_credentials, request)
 
-    def _oauth_get_credentials(self, system_credentials: Mapping[str, Any], request: Request) -> Mapping[str, Any]:
+    def _oauth_get_credentials(
+        self, redirect_uri: str, system_credentials: Mapping[str, Any], request: Request
+    ) -> Mapping[str, Any]:
         raise NotImplementedError("This method should be implemented by a subclass")
 
 

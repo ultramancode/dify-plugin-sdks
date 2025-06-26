@@ -44,7 +44,6 @@ from dify_plugin.interfaces.model.rerank_model import RerankModel
 from dify_plugin.interfaces.model.speech2text_model import Speech2TextModel
 from dify_plugin.interfaces.model.text_embedding_model import TextEmbeddingModel
 from dify_plugin.interfaces.model.tts_model import TTSModel
-from dify_plugin.interfaces.tool import ToolProvider
 from dify_plugin.protocol.oauth import OAuthProviderProtocol
 
 
@@ -342,7 +341,9 @@ class PluginExecutor:
         provider_instance = self._get_oauth_provider_instance(data.provider)
 
         return {
-            "authorization_url": provider_instance.oauth_get_authorization_url(data.system_credentials),
+            "authorization_url": provider_instance.oauth_get_authorization_url(
+                data.redirect_uri, data.system_credentials
+            ),
         }
 
     def get_oauth_credentials(self, session: Session, data: OAuthGetCredentialsRequest):
@@ -351,7 +352,7 @@ class PluginExecutor:
         request = parse_raw_request(bytes_data)
 
         return {
-            "credentials": provider_instance.oauth_get_credentials(data.system_credentials, request),
+            "credentials": provider_instance.oauth_get_credentials(data.redirect_uri, data.system_credentials, request),
         }
 
     def validate_datasource_credentials(self, session: Session, data: DatasourceValidateCredentialsRequest):

@@ -17,4 +17,4 @@ def test_oauth_get_authorization_url():
     """
     provider = DatasourceProvider()
     with pytest.raises(NotImplementedError):
-        provider.oauth_get_authorization_url({})
+        provider.oauth_get_authorization_url("", {})

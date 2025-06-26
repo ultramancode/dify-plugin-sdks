@@ -1,5 +1,5 @@
-import urllib.parse
 import secrets
+import urllib.parse
 from collections.abc import Mapping
 from typing import Any
 
@@ -15,21 +15,23 @@ class GithubProvider(ToolProvider):
     _TOKEN_URL = "https://github.com/login/oauth/access_token"
     _API_USER_URL = "https://api.github.com/user"
 
-    def _oauth_get_authorization_url(self, system_credentials: Mapping[str, Any]) -> str:
+    def _oauth_get_authorization_url(self, redirect_uri: str, system_credentials: Mapping[str, Any]) -> str:
         """
         Generate the authorization URL for the Github OAuth.
         """
         state = secrets.token_urlsafe(16)
         params = {
             "client_id": system_credentials["client_id"],
-            "redirect_uri": system_credentials["redirect_uri"],
+            "redirect_uri": redirect_uri,
             "scope": system_credentials.get("scope", "read:user"),
             "state": state,
             # Optionally: allow_signup, login, etc.
         }
         return f"{self._AUTH_URL}?{urllib.parse.urlencode(params)}"
 
-    def _oauth_get_credentials(self, system_credentials: Mapping[str, Any], request: Request) -> Mapping[str, Any]:
+    def _oauth_get_credentials(
+        self, redirect_uri: str, system_credentials: Mapping[str, Any], request: Request
+    ) -> Mapping[str, Any]:
         """
         Exchange code for access_token.
         """
@@ -42,7 +44,7 @@ class GithubProvider(ToolProvider):
             "client_id": system_credentials["client_id"],
             "client_secret": system_credentials["client_secret"],
             "code": code,
-            "redirect_uri": system_credentials["redirect_uri"],
+            "redirect_uri": redirect_uri,
         }
         headers = {"Accept": "application/json"}
         response = requests.post(self._TOKEN_URL, data=data, headers=headers, timeout=10)

@@ -12,19 +12,21 @@ class NotionDatasourceProvider(DatasourceProvider):
     _AUTH_URL = "https://api.notion.com/v1/oauth/authorize"
     _TOKEN_URL = "https://api.notion.com/v1/oauth/token"
 
-    def _oauth_get_authorization_url(self, system_credentials: Mapping[str, Any]) -> str:
+    def _oauth_get_authorization_url(self, redirect_uri: str, system_credentials: Mapping[str, Any]) -> str:
         """
         Generate the authorization URL for the Notion OAuth.
         """
         params = {
             "client_id": system_credentials["client_id"],
             "response_type": "code",
-            "redirect_uri": system_credentials["redirect_uri"],
+            "redirect_uri": redirect_uri,
             "owner": "user",
         }
         return f"{self._AUTH_URL}?{urllib.parse.urlencode(params)}"
 
-    def _oauth_get_credentials(self, system_credentials: Mapping[str, Any], request: Request) -> Mapping[str, Any]:
+    def _oauth_get_credentials(
+        self, redirect_uri: str, system_credentials: Mapping[str, Any], request: Request
+    ) -> Mapping[str, Any]:
         """
         Get the credentials for the Notion OAuth.
         """
@@ -32,7 +34,7 @@ class NotionDatasourceProvider(DatasourceProvider):
         if not code:
             raise ValueError("No code provided")
 
-        data = {"code": code, "grant_type": "authorization_code", "redirect_uri": system_credentials["redirect_uri"]}
+        data = {"code": code, "grant_type": "authorization_code", "redirect_uri": redirect_uri}
         headers = {"Accept": "application/json"}
         auth = (system_credentials["client_id"], system_credentials["client_secret"])
         response = requests.post(self._TOKEN_URL, data=data, auth=auth, headers=headers, timeout=10)
