@@ -8,9 +8,7 @@ from dify_plugin import Tool
 
 
 class GithubRepositoriesTool(Tool):
-    def _invoke(
-        self, tool_parameters: dict[str, Any]
-    ) -> Generator[ToolInvokeMessage, None, None]:
+    def _invoke(self, tool_parameters: dict[str, Any]) -> Generator[ToolInvokeMessage, None, None]:
         """
         invoke tools
         """
@@ -48,7 +46,9 @@ class GithubRepositoriesTool(Tool):
                         content["name"] = item["name"]
                         if item["description"] is not None:
                             content["description"] = (
-                                item["description"][:100] + "..." if len(item["description"]) > 100 else item["description"]
+                                item["description"][:100] + "..."
+                                if len(item["description"]) > 100
+                                else item["description"]
                             )
                         else:
                             content["description"] = ""
@@ -59,7 +59,10 @@ class GithubRepositoriesTool(Tool):
                         contents.append(content)
                     s.close()
                     yield self.create_text_message(
-                        self.session.model.summary(content=json.dumps(contents, ensure_ascii=False))
+                        self.session.model.summary.invoke(
+                            text=json.dumps(contents, ensure_ascii=False),
+                            instruction="Summarize the text",
+                        )
                     )
                 else:
                     yield self.create_text_message(f"No items related to {query} were found.")

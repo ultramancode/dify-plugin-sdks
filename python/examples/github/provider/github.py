@@ -34,7 +34,6 @@ class GithubProvider(ToolProvider):
         Exchange code for access_token.
         """
         code = request.args.get("code")
-        state = request.args.get("state")
         if not code:
             raise ValueError("No code provided")
         # Optionally: validate state here
@@ -55,10 +54,10 @@ class GithubProvider(ToolProvider):
 
     def _validate_credentials(self, credentials: dict) -> None:
         try:
-            if "access_token" not in credentials or not credentials.get("access_token"):
+            if "access_tokens" not in credentials or not credentials.get("access_tokens"):
                 raise ToolProviderCredentialValidationError("GitHub API Access Token is required.")
             headers = {
-                "Authorization": f"Bearer {credentials['access_token']}",
+                "Authorization": f"Bearer {credentials['access_tokens']}",
                 "Accept": "application/vnd.github+json",
             }
             response = requests.get(self._API_USER_URL, headers=headers, timeout=10)
