@@ -8,6 +8,8 @@ from dify_plugin.config.config import DifyPluginEnv
 from dify_plugin.core.entities.plugin.request import (
     AgentInvokeRequest,
     DatasourceCrawlWebsiteRequest,
+    DatasourceOnlineDriverBrowseFilesRequest,
+    DatasourceOnlineDriverDownloadFileRequest,
     DatasourceGetPageContentRequest,
     DatasourceGetPagesRequest,
     DatasourceValidateCredentialsRequest,
@@ -34,7 +36,9 @@ from dify_plugin.core.plugin_registration import PluginRegistration
 from dify_plugin.core.runtime import Session
 from dify_plugin.core.utils.http_parser import parse_raw_request
 from dify_plugin.entities.agent import AgentRuntime
-from dify_plugin.entities.datasource import DatasourceRuntime
+from dify_plugin.entities.datasource import (
+    DatasourceRuntime,
+)
 from dify_plugin.entities.tool import ToolRuntime
 from dify_plugin.interfaces.endpoint import Endpoint
 from dify_plugin.interfaces.model.ai_model import AIModel
@@ -414,3 +418,35 @@ class PluginExecutor:
         )
 
         return datasource_instance.get_content(page=data.page)
+
+    def datasource_online_driver_browse_files(self, session: Session, data: DatasourceOnlineDriverBrowseFilesRequest):
+        datasource_cls = self.registration.get_online_driver_datasource_cls(data.provider, data.datasource)
+        if datasource_cls is None:
+            raise ValueError(f"Datasource `{data.datasource}` not found for provider `{data.provider}`")
+
+        datasource_instance = datasource_cls(
+            runtime=DatasourceRuntime(
+                credentials=data.credentials,
+                user_id=data.user_id,
+                session_id=session.session_id,
+            ),
+            session=session,
+        )
+
+        yield datasource_instance.browse_files(data.request)
+
+    def datasource_online_driver_download_file(self, session: Session, data: DatasourceOnlineDriverDownloadFileRequest):
+        datasource_cls = self.registration.get_online_driver_datasource_cls(data.provider, data.datasource)
+        if datasource_cls is None:
+            raise ValueError(f"Datasource `{data.datasource}` not found for provider `{data.provider}`")
+
+        datasource_instance = datasource_cls(
+            runtime=DatasourceRuntime(
+                credentials=data.credentials,
+                user_id=data.user_id,
+                session_id=session.session_id,
+            ),
+            session=session,
+        )
+
+        return datasource_instance.download_file(data.request)

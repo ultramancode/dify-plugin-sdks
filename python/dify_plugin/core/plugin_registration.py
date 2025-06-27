@@ -21,6 +21,7 @@ from dify_plugin.entities.tool import ToolConfiguration, ToolProviderConfigurati
 from dify_plugin.interfaces.agent import AgentStrategy
 from dify_plugin.interfaces.datasource import DatasourceProvider
 from dify_plugin.interfaces.datasource.online_document import OnlineDocumentDatasource
+from dify_plugin.interfaces.datasource.online_driver import OnlineDriverDatasource
 from dify_plugin.interfaces.datasource.website import WebsiteCrawlDatasource
 from dify_plugin.interfaces.endpoint import Endpoint
 from dify_plugin.interfaces.model import ModelProvider
@@ -48,6 +49,7 @@ class DatasourceProviderMapping:
 
     website_crawl_datasource_mapping: Mapping[str, type[WebsiteCrawlDatasource]]
     online_document_datasource_mapping: Mapping[str, type[OnlineDocumentDatasource]]
+    online_driver_datasource_mapping: Mapping[str, type[OnlineDriverDatasource]]
 
     def __init__(
         self,
@@ -56,12 +58,14 @@ class DatasourceProviderMapping:
         configuration: DatasourceProviderManifest,
         website_crawl_datasource_mapping: Mapping[str, type[WebsiteCrawlDatasource]] | None = None,
         online_document_datasource_mapping: Mapping[str, type[OnlineDocumentDatasource]] | None = None,
+        online_driver_datasource_mapping: Mapping[str, type[OnlineDriverDatasource]] | None = None,
     ) -> None:
         self.provider = provider
         self.provider_cls = provider_cls
         self.configuration = configuration
         self.website_crawl_datasource_mapping = website_crawl_datasource_mapping or {}
         self.online_document_datasource_mapping = online_document_datasource_mapping or {}
+        self.online_driver_datasource_mapping = online_driver_datasource_mapping or {}
 
 
 class PluginRegistration:
@@ -245,6 +249,7 @@ class PluginRegistration:
             datasource_mappings = {
                 DatasourceProviderType.WEBSITE_CRAWL: (WebsiteCrawlDatasource, {}),
                 DatasourceProviderType.ONLINE_DOCUMENT: (OnlineDocumentDatasource, {}),
+                DatasourceProviderType.ONLINE_DRIVER: (OnlineDriverDatasource, {}),
             }
 
             if provider.provider_type in datasource_mappings:
@@ -264,6 +269,7 @@ class PluginRegistration:
                 configuration=provider,
                 website_crawl_datasource_mapping=datasource_mappings[DatasourceProviderType.WEBSITE_CRAWL][1],
                 online_document_datasource_mapping=datasource_mappings[DatasourceProviderType.ONLINE_DOCUMENT][1],
+                online_driver_datasource_mapping=datasource_mappings[DatasourceProviderType.ONLINE_DRIVER][1],
             )
 
     def _is_strict_subclass(self, cls: type[T], *parent_cls: type[T]) -> bool:
@@ -491,3 +497,16 @@ class PluginRegistration:
             return endpoint, values
         except werkzeug.exceptions.HTTPException as e:
             raise ValueError(f"Failed to dispatch endpoint request: {e!s}") from e
+
+    def get_online_driver_datasource_cls(self, provider: str, datasource: str):
+        """
+        get the online driver datasource class by provider and datasource name
+        :param provider: provider name
+        :param datasource: datasource name
+        :return: online driver datasource class
+        """
+        if provider in self.datasource_mapping:
+            result = self.datasource_mapping[provider].online_driver_datasource_mapping.get(datasource)
+            if result:
+                return result
+        raise ValueError(f"Online driver datasource {datasource} not found for provider {provider}")

@@ -4,7 +4,11 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, field_validator
 
-from dify_plugin.entities.datasource import GetOnlineDocumentPageContentRequest
+from dify_plugin.entities.datasource import (
+    GetOnlineDocumentPageContentRequest,
+    OnlineDriverBrowseFilesRequest,
+    OnlineDriverDownloadFileRequest,
+)
 from dify_plugin.entities.model import ModelType
 from dify_plugin.entities.model.message import (
     AssistantPromptMessage,
@@ -65,6 +69,8 @@ class DatasourceActions(StrEnum):
     InvokeWebsiteDatasourceGetCrawl = "invoke_website_datasource_get_crawl"
     InvokeOnlineDocumentDatasourceGetPages = "invoke_online_document_datasource_get_pages"
     InvokeOnlineDocumentDatasourceGetPageContent = "invoke_online_document_datasource_get_page_content"
+    InvokeOnlineDriverBrowseFiles = "invoke_online_driver_browse_files"
+    InvokeOnlineDriverDownloadFile = "invoke_online_driver_download_file"
 
 
 # merge all the access actions
@@ -294,3 +300,21 @@ class DatasourceGetPageContentRequest(PluginAccessRequest):
     datasource: str
     credentials: Mapping[str, Any]
     page: GetOnlineDocumentPageContentRequest
+
+
+class DatasourceOnlineDriverBrowseFilesRequest(PluginAccessRequest):
+    type: PluginInvokeType = PluginInvokeType.Datasource
+    action: DatasourceActions = DatasourceActions.InvokeOnlineDriverBrowseFiles
+    provider: str
+    datasource: str
+    credentials: Mapping[str, Any]
+    request: OnlineDriverBrowseFilesRequest
+
+
+class DatasourceOnlineDriverDownloadFileRequest(PluginAccessRequest):
+    type: PluginInvokeType = PluginInvokeType.Datasource
+    action: DatasourceActions = DatasourceActions.InvokeOnlineDriverDownloadFile
+    provider: str
+    datasource: str
+    credentials: Mapping[str, Any]
+    request: OnlineDriverDownloadFileRequest

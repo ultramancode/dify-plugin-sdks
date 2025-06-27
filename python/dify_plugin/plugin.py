@@ -350,6 +350,18 @@ class Plugin(IOServer, Router):
             and data.get("action") == OAuthActions.GetCredentials.value,
         )
 
+        self.register_route(
+            self.plugin_executer.datasource_online_driver_browse_files,
+            lambda data: data.get("type") == PluginInvokeType.Datasource.value
+            and data.get("action") == DatasourceActions.InvokeOnlineDriverBrowseFiles.value,
+        )
+
+        self.register_route(
+            self.plugin_executer.datasource_online_driver_download_file,
+            lambda data: data.get("type") == PluginInvokeType.Datasource.value
+            and data.get("action") == DatasourceActions.InvokeOnlineDriverDownloadFile.value,
+        )
+
     def _execute_request(
         self,
         session_id: str,

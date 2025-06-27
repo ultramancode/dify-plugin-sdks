@@ -5,6 +5,19 @@ from pydantic import BaseModel, Field
 
 from dify_plugin.entities.invoke_message import InvokeMessage
 
+#########################
+# Data source common message
+#########################
+
+
+class DataSourceMessage(InvokeMessage):
+    pass
+
+
+#########################
+# Online document
+#########################
+
 
 class DatasourceRuntime(BaseModel):
     credentials: Mapping[str, Any]
@@ -81,5 +94,55 @@ class GetOnlineDocumentPageContentRequest(BaseModel):
     type: str = Field(..., description="The type of the page")
 
 
-class DataSourceMessage(InvokeMessage):
-    pass
+#########################
+# Online driver file
+#########################
+
+
+class OnlineDriverFile(BaseModel):
+    """
+    Online driver file
+    """
+
+    key: str = Field(..., description="The key of the file")
+    size: int = Field(..., description="The size of the file")
+
+
+class OnlineDriverFileBucket(BaseModel):
+    """
+    Online driver file bucket
+    """
+
+    bucket: Optional[str] = Field(..., description="The bucket of the file")
+    files: list[OnlineDriverFile] = Field(..., description="The files of the bucket")
+    is_truncated: bool = Field(..., description="Whether the bucket has more files")
+
+
+class OnlineDriverBrowseFilesRequest(BaseModel):
+    """
+    Get online driver file list request
+    """
+
+    prefix: Optional[str] = Field(None, description="File path prefix for filtering eg: 'docs/dify/'")
+    bucket: Optional[str] = Field(None, description="Storage bucket name")
+    max_keys: int = Field(20, description="Maximum number of files to return")
+    start_after: Optional[str] = Field(
+        None, description="Pagination token for continuing from a specific file eg: 'docs/dify/1.txt'"
+    )
+
+
+class OnlineDriverBrowseFilesResponse(BaseModel):
+    """
+    Get online driver file list response
+    """
+
+    result: list[OnlineDriverFileBucket] = Field(..., description="The bucket of the files")
+
+
+class OnlineDriverDownloadFileRequest(BaseModel):
+    """
+    Get online driver file
+    """
+
+    key: str = Field(..., description="The name of the file")
+    bucket: Optional[str] = Field(None, description="The name of the bucket")

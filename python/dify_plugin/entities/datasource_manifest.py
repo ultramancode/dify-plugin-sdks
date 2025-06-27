@@ -48,6 +48,7 @@ class DatasourceProviderType(StrEnum):
 
     ONLINE_DOCUMENT = "online_document"
     WEBSITE_CRAWL = "website_crawl"
+    ONLINE_DRIVER = "online_driver"
 
 
 @docs(
