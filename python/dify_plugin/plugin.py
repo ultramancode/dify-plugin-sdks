@@ -351,15 +351,15 @@ class Plugin(IOServer, Router):
         )
 
         self.register_route(
-            self.plugin_executer.datasource_online_driver_browse_files,
+            self.plugin_executer.datasource_online_drive_browse_files,
             lambda data: data.get("type") == PluginInvokeType.Datasource.value
-            and data.get("action") == DatasourceActions.InvokeOnlineDriverBrowseFiles.value,
+            and data.get("action") == DatasourceActions.InvokeOnlineDriveBrowseFiles.value,
         )
 
         self.register_route(
-            self.plugin_executer.datasource_online_driver_download_file,
+            self.plugin_executer.datasource_online_drive_download_file,
             lambda data: data.get("type") == PluginInvokeType.Datasource.value
-            and data.get("action") == DatasourceActions.InvokeOnlineDriverDownloadFile.value,
+            and data.get("action") == DatasourceActions.InvokeOnlineDriveDownloadFile.value,
         )
 
     def _execute_request(

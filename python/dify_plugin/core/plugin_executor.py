@@ -8,8 +8,8 @@ from dify_plugin.config.config import DifyPluginEnv
 from dify_plugin.core.entities.plugin.request import (
     AgentInvokeRequest,
     DatasourceCrawlWebsiteRequest,
-    DatasourceOnlineDriverBrowseFilesRequest,
-    DatasourceOnlineDriverDownloadFileRequest,
+    DatasourceOnlineDriveBrowseFilesRequest,
+    DatasourceOnlineDriveDownloadFileRequest,
     DatasourceGetPageContentRequest,
     DatasourceGetPagesRequest,
     DatasourceValidateCredentialsRequest,
@@ -419,8 +419,8 @@ class PluginExecutor:
 
         return datasource_instance.get_content(page=data.page)
 
-    def datasource_online_driver_browse_files(self, session: Session, data: DatasourceOnlineDriverBrowseFilesRequest):
-        datasource_cls = self.registration.get_online_driver_datasource_cls(data.provider, data.datasource)
+    def datasource_online_drive_browse_files(self, session: Session, data: DatasourceOnlineDriveBrowseFilesRequest):
+        datasource_cls = self.registration.get_online_drive_datasource_cls(data.provider, data.datasource)
         if datasource_cls is None:
             raise ValueError(f"Datasource `{data.datasource}` not found for provider `{data.provider}`")
 
@@ -435,8 +435,8 @@ class PluginExecutor:
 
         yield datasource_instance.browse_files(data.request)
 
-    def datasource_online_driver_download_file(self, session: Session, data: DatasourceOnlineDriverDownloadFileRequest):
-        datasource_cls = self.registration.get_online_driver_datasource_cls(data.provider, data.datasource)
+    def datasource_online_drive_download_file(self, session: Session, data: DatasourceOnlineDriveDownloadFileRequest):
+        datasource_cls = self.registration.get_online_drive_datasource_cls(data.provider, data.datasource)
         if datasource_cls is None:
             raise ValueError(f"Datasource `{data.datasource}` not found for provider `{data.provider}`")
 

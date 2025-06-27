@@ -6,8 +6,8 @@ from pydantic import BaseModel, ConfigDict, field_validator
 
 from dify_plugin.entities.datasource import (
     GetOnlineDocumentPageContentRequest,
-    OnlineDriverBrowseFilesRequest,
-    OnlineDriverDownloadFileRequest,
+    OnlineDriveBrowseFilesRequest,
+    OnlineDriveDownloadFileRequest,
 )
 from dify_plugin.entities.model import ModelType
 from dify_plugin.entities.model.message import (
@@ -69,8 +69,8 @@ class DatasourceActions(StrEnum):
     InvokeWebsiteDatasourceGetCrawl = "invoke_website_datasource_get_crawl"
     InvokeOnlineDocumentDatasourceGetPages = "invoke_online_document_datasource_get_pages"
     InvokeOnlineDocumentDatasourceGetPageContent = "invoke_online_document_datasource_get_page_content"
-    InvokeOnlineDriverBrowseFiles = "invoke_online_driver_browse_files"
-    InvokeOnlineDriverDownloadFile = "invoke_online_driver_download_file"
+    InvokeOnlineDriveBrowseFiles = "invoke_online_drive_browse_files"
+    InvokeOnlineDriveDownloadFile = "invoke_online_drive_download_file"
 
 
 # merge all the access actions
@@ -302,19 +302,19 @@ class DatasourceGetPageContentRequest(PluginAccessRequest):
     page: GetOnlineDocumentPageContentRequest
 
 
-class DatasourceOnlineDriverBrowseFilesRequest(PluginAccessRequest):
+class DatasourceOnlineDriveBrowseFilesRequest(PluginAccessRequest):
     type: PluginInvokeType = PluginInvokeType.Datasource
-    action: DatasourceActions = DatasourceActions.InvokeOnlineDriverBrowseFiles
+    action: DatasourceActions = DatasourceActions.InvokeOnlineDriveBrowseFiles
     provider: str
     datasource: str
     credentials: Mapping[str, Any]
-    request: OnlineDriverBrowseFilesRequest
+    request: OnlineDriveBrowseFilesRequest
 
 
-class DatasourceOnlineDriverDownloadFileRequest(PluginAccessRequest):
+class DatasourceOnlineDriveDownloadFileRequest(PluginAccessRequest):
     type: PluginInvokeType = PluginInvokeType.Datasource
-    action: DatasourceActions = DatasourceActions.InvokeOnlineDriverDownloadFile
+    action: DatasourceActions = DatasourceActions.InvokeOnlineDriveDownloadFile
     provider: str
     datasource: str
     credentials: Mapping[str, Any]
-    request: OnlineDriverDownloadFileRequest
+    request: OnlineDriveDownloadFileRequest

@@ -95,32 +95,32 @@ class GetOnlineDocumentPageContentRequest(BaseModel):
 
 
 #########################
-# Online driver file
+# Online drive file
 #########################
 
 
-class OnlineDriverFile(BaseModel):
+class OnlineDriveFile(BaseModel):
     """
-    Online driver file
+    Online drive file
     """
 
     key: str = Field(..., description="The key of the file")
     size: int = Field(..., description="The size of the file")
 
 
-class OnlineDriverFileBucket(BaseModel):
+class OnlineDriveFileBucket(BaseModel):
     """
-    Online driver file bucket
+    Online drive file bucket
     """
 
     bucket: Optional[str] = Field(..., description="The bucket of the file")
-    files: list[OnlineDriverFile] = Field(..., description="The files of the bucket")
+    files: list[OnlineDriveFile] = Field(..., description="The files of the bucket")
     is_truncated: bool = Field(..., description="Whether the bucket has more files")
 
 
-class OnlineDriverBrowseFilesRequest(BaseModel):
+class OnlineDriveBrowseFilesRequest(BaseModel):
     """
-    Get online driver file list request
+    Get online drive file list request
     """
 
     prefix: Optional[str] = Field(None, description="File path prefix for filtering eg: 'docs/dify/'")
@@ -131,17 +131,17 @@ class OnlineDriverBrowseFilesRequest(BaseModel):
     )
 
 
-class OnlineDriverBrowseFilesResponse(BaseModel):
+class OnlineDriveBrowseFilesResponse(BaseModel):
     """
-    Get online driver file list response
+    Get online drive file list response
     """
 
-    result: list[OnlineDriverFileBucket] = Field(..., description="The bucket of the files")
+    result: list[OnlineDriveFileBucket] = Field(..., description="The bucket of the files")
 
 
-class OnlineDriverDownloadFileRequest(BaseModel):
+class OnlineDriveDownloadFileRequest(BaseModel):
     """
-    Get online driver file
+    Get online drive file
     """
 
     key: str = Field(..., description="The name of the file")
