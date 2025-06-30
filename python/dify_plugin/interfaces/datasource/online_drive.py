@@ -9,7 +9,6 @@ from dify_plugin.entities.datasource import (
     OnlineDriveBrowseFilesRequest,
     OnlineDriveBrowseFilesResponse,
     OnlineDriveDownloadFileRequest,
-    OnlineDriveFileBucket,
 )
 from dify_plugin.interfaces.tool import ToolLike
 
@@ -42,10 +41,10 @@ class OnlineDriveDatasource(ToolLike[DataSourceMessage]):
         """
         Get the file list
         """
-        return OnlineDriveBrowseFilesResponse(result=self._browse_files(request))
+        return self._browse_files(request)
 
     @abstractmethod
-    def _browse_files(self, request: OnlineDriveBrowseFilesRequest) -> list[OnlineDriveFileBucket]:
+    def _browse_files(self, request: OnlineDriveBrowseFilesRequest) -> OnlineDriveBrowseFilesResponse:
         """
         Browse the files
         """
