@@ -30,11 +30,14 @@ class I18nObject(BaseModel):
 
 
 @docs(
-    description="The option of the tool parameter",
+    description="The option of the parameter",
 )
 class ParameterOption(BaseModel):
     value: str = Field(..., description="The value of the option")
     label: I18nObject = Field(..., description="The label of the option")
+    icon: Optional[str] = Field(
+        default=None, description="The icon of the option, can be a URL or a base64 encoded string"
+    )
 
     @field_validator("value", mode="before")
     @classmethod
@@ -43,7 +46,6 @@ class ParameterOption(BaseModel):
             return str(value)
         else:
             return value
-
 
 @docs(
     description="The auto generate of the parameter",

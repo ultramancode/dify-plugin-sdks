@@ -2,17 +2,13 @@ from abc import ABC, abstractmethod
 from collections.abc import Generator, Mapping
 from typing import Any, Generic, Optional, TypeVar, final
 
+from typing_extensions import deprecated
 from werkzeug import Request
 
 from dify_plugin.core.runtime import Session
 from dify_plugin.entities.invoke_message import InvokeMessage
-from dify_plugin.entities.tool import (
-    LogMetadata,
-    ToolInvokeMessage,
-    ToolParameter,
-    ToolRuntime,
-    ToolSelector,
-)
+from dify_plugin.entities import ParameterOption
+from dify_plugin.entities.tool import LogMetadata, ToolInvokeMessage, ToolParameter, ToolRuntime, ToolSelector
 from dify_plugin.file.constants import DIFY_FILE_IDENTITY, DIFY_TOOL_SELECTOR_IDENTITY
 from dify_plugin.file.entities import FileType
 from dify_plugin.file.file import File
@@ -173,6 +169,7 @@ class ToolLike(ABC, Generic[T]):
             ),
         )
 
+    @deprecated("This feature is deprecated, will soon be replaced by dynamic select parameter")
     def _get_runtime_parameters(self) -> list[ToolParameter]:
         """
         get the runtime parameters of the tool
@@ -235,7 +232,9 @@ class ToolProvider:
         return self._validate_credentials(credentials)
 
     def _validate_credentials(self, credentials: dict):
-        raise NotImplementedError("This method should be implemented by a subclass")
+        raise NotImplementedError(
+            "This plugin should implement `_validate_credentials` method to enable credentials validation"
+        )
 
     def oauth_get_authorization_url(self, redirect_uri: str, system_credentials: Mapping[str, Any]) -> str:
         return self._oauth_get_authorization_url(redirect_uri, system_credentials)
@@ -293,6 +292,18 @@ class Tool(ToolLike[ToolInvokeMessage]):
     def _invoke(self, tool_parameters: dict) -> Generator[ToolInvokeMessage, None, None]:
         pass
 
+    def _fetch_parameter_options(self, parameter: str) -> list[ParameterOption]:
+        """
+        Fetch the parameter options of the tool.
+
+        To be implemented by subclasses.
+
+        Also, it's optional to implement, that's why it's not an abstract method.
+        """
+        raise NotImplementedError(
+            "This plugin should implement `_fetch_parameter_options` method to enable dynamic select parameter"
+        )
+
     ############################################################
     #                 For executor use only                    #
     ############################################################
@@ -302,5 +313,15 @@ class Tool(ToolLike[ToolInvokeMessage]):
         tool_parameters = self._convert_parameters(tool_parameters)
         return self._invoke(tool_parameters)
 
+    @deprecated("This feature is deprecated, will soon be replaced by dynamic select parameter")
     def get_runtime_parameters(self) -> list[ToolParameter]:
         return self._get_runtime_parameters()
+
+    def fetch_parameter_options(self, parameter: str) -> list[ParameterOption]:
+        """
+        Fetch the parameter options of the tool.
+
+        To be implemented by subclasses.
+
+        """
+        return self._fetch_parameter_options(parameter)
