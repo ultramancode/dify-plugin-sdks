@@ -1,5 +1,5 @@
 from collections.abc import Mapping
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -10,7 +10,7 @@ from dify_plugin.entities.invoke_message import InvokeMessage
 #########################
 
 
-class DataSourceMessage(InvokeMessage):
+class DatasourceMessage(InvokeMessage):
     pass
 
 
@@ -21,8 +21,8 @@ class DataSourceMessage(InvokeMessage):
 
 class DatasourceRuntime(BaseModel):
     credentials: Mapping[str, Any]
-    user_id: Optional[str]
-    session_id: Optional[str]
+    user_id: str | None
+    session_id: str | None
 
 
 class WebSiteInfoDetail(BaseModel):
@@ -37,10 +37,10 @@ class WebSiteInfo(BaseModel):
     Website info
     """
 
-    status: Optional[str] = Field(..., description="crawl job status")
-    web_info_list: Optional[list[WebSiteInfoDetail]] = []
-    total: Optional[int] = Field(default=0, description="The total number of websites")
-    completed: Optional[int] = Field(default=0, description="The number of completed websites")
+    status: str | None = Field(..., description="crawl job status")
+    web_info_list: list[WebSiteInfoDetail] | None = []
+    total: int | None = Field(default=0, description="The total number of websites")
+    completed: int | None = Field(default=0, description="The number of completed websites")
 
 
 class WebsiteCrawlMessage(BaseModel):
@@ -58,10 +58,10 @@ class OnlineDocumentPage(BaseModel):
 
     page_id: str = Field(..., description="The page id")
     page_name: str = Field(..., description="The page name")
-    page_icon: Optional[dict] = Field(None, description="The page icon")
+    page_icon: dict | None = Field(None, description="The page icon")
     type: str = Field(..., description="The type of the page")
     last_edited_time: str = Field(..., description="The last edited time")
-    parent_id: Optional[str] = Field(None, description="The parent page id")
+    parent_id: str | None = Field(None, description="The parent page id")
 
 
 class OnlineDocumentInfo(BaseModel):
@@ -113,7 +113,7 @@ class OnlineDriveFileBucket(BaseModel):
     Online drive file bucket
     """
 
-    bucket: Optional[str] = Field(..., description="The bucket of the file")
+    bucket: str | None = Field(..., description="The bucket of the file")
     files: list[OnlineDriveFile] = Field(..., description="The files of the bucket")
     is_truncated: bool = Field(..., description="Whether the bucket has more files")
 
@@ -123,10 +123,10 @@ class OnlineDriveBrowseFilesRequest(BaseModel):
     Get online drive file list request
     """
 
-    prefix: Optional[str] = Field(None, description="File path prefix for filtering eg: 'docs/dify/'")
-    bucket: Optional[str] = Field(None, description="Storage bucket name")
+    prefix: str | None = Field(None, description="File path prefix for filtering eg: 'docs/dify/'")
+    bucket: str | None = Field(None, description="Storage bucket name")
     max_keys: int = Field(20, description="Maximum number of files to return")
-    start_after: Optional[str] = Field(
+    start_after: str | None = Field(
         None, description="Pagination token for continuing from a specific file eg: 'docs/dify/1.txt'"
     )
 
@@ -145,4 +145,4 @@ class OnlineDriveDownloadFileRequest(BaseModel):
     """
 
     key: str = Field(..., description="The name of the file")
-    bucket: Optional[str] = Field(None, description="The name of the bucket")
+    bucket: str | None = Field(None, description="The name of the bucket")

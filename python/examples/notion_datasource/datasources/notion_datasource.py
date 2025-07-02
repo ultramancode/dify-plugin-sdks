@@ -1,15 +1,17 @@
 from collections.abc import Generator
 from typing import Any
+
 import requests
-
-from dify_plugin.entities.datasource import (
-    GetOnlineDocumentPageContentRequest,
-    DataSourceMessage, OnlineDocumentInfo, OnlineDocumentPagesMessage,
-)
-from dify_plugin.interfaces.datasource.online_document import OnlineDocumentDatasource
-
 from datasources.utils.notion_client import NotionClient
 from datasources.utils.notion_extractor import NotionExtractor
+
+from dify_plugin.entities.datasource import (
+    DatasourceMessage,
+    GetOnlineDocumentPageContentRequest,
+    OnlineDocumentInfo,
+    OnlineDocumentPagesMessage,
+)
+from dify_plugin.interfaces.datasource.online_document import OnlineDocumentDatasource
 
 
 class NotionDataSource(OnlineDocumentDatasource):
@@ -20,9 +22,7 @@ class NotionDataSource(OnlineDocumentDatasource):
     _NOTION_BLOCK_SEARCH = "https://api.notion.com/v1/blocks"
     _NOTION_BOT_USER = "https://api.notion.com/v1/users/me"
 
-    def _get_pages(
-        self, datasource_parameters: dict[str, Any]
-    ) -> Generator[OnlineDocumentPagesMessage, None, None]:
+    def _get_pages(self, datasource_parameters: dict[str, Any]) -> Generator[OnlineDocumentPagesMessage, None, None]:
         # Get integration token from credentials
         access_token = self.runtime.credentials.get("integration_secret")
         if not access_token:
@@ -40,12 +40,9 @@ class NotionDataSource(OnlineDocumentDatasource):
             total=len(pages),
         )
         print(datasource_parameters)
-        yield self.create_pages_message(pages = [online_document_info])
+        yield self.create_pages_message(pages=[online_document_info])
 
-
-    def _get_content(
-        self, page: GetOnlineDocumentPageContentRequest
-    ) -> Generator[DataSourceMessage, None, None]:
+    def _get_content(self, page: GetOnlineDocumentPageContentRequest) -> Generator[DatasourceMessage, None, None]:
         access_token = self.runtime.credentials.get("integration_secret")
         if not access_token:
             raise ValueError("Access token not found in credentials")
@@ -60,11 +57,9 @@ class NotionDataSource(OnlineDocumentDatasource):
         except Exception as e:
             raise ValueError(str(e))
         print(online_document_res)
-        yield self.create_variable_message("page_id", online_document_res['page_id'])
-        yield self.create_variable_message("content", online_document_res['content'])
-        yield self.create_variable_message("workspace_id", online_document_res['workspace_id'])
-
-
+        yield self.create_variable_message("page_id", online_document_res["page_id"])
+        yield self.create_variable_message("content", online_document_res["content"])
+        yield self.create_variable_message("workspace_id", online_document_res["workspace_id"])
 
     def notion_workspace_name(self, access_token: str):
         headers = {

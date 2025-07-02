@@ -1,10 +1,12 @@
-from collections.abc import Mapping, Generator
+from collections.abc import Generator, Mapping
 from typing import Any
 
 from dify_plugin.entities.datasource import (
+    DatasourceMessage,
     GetOnlineDocumentPageContentRequest,
+    OnlineDocumentInfo,
+    OnlineDocumentPage,
     OnlineDocumentPagesMessage,
-    DataSourceMessage, OnlineDocumentPage, OnlineDocumentInfo,
 )
 from dify_plugin.interfaces.datasource.online_document import OnlineDocumentDatasource
 
@@ -35,11 +37,8 @@ class NotionDatasource(OnlineDocumentDatasource):
             ]
         )
 
-    def _get_content(self, page: GetOnlineDocumentPageContentRequest) -> Generator[
-        DataSourceMessage, None, None]:
-        yield DataSourceMessage(
-            type=DataSourceMessage.Type.TEXT,
-            message=DataSourceMessage.TextMessage(
-                text=f"Notion page content for {page.workspace_id} - {page.page_id}"
-            )
+    def _get_content(self, page: GetOnlineDocumentPageContentRequest) -> Generator[DatasourceMessage, None, None]:
+        yield DatasourceMessage(
+            type=DatasourceMessage.Type.TEXT,
+            message=DatasourceMessage.TextMessage(text=f"Notion page content for {page.workspace_id} - {page.page_id}"),
         )

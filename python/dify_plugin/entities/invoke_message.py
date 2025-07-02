@@ -3,7 +3,7 @@ import contextlib
 import uuid
 from collections.abc import Mapping
 from enum import Enum
-from typing import Any, Optional, Union
+from typing import Any
 
 from pydantic import (
     BaseModel,
@@ -66,11 +66,11 @@ class InvokeMessage(BaseModel):
 
         id: str = Field(default_factory=lambda: str(uuid.uuid4()), description="The id of the log")
         label: str = Field(..., description="The label of the log")
-        parent_id: Optional[str] = Field(default=None, description="Leave empty for root log")
-        error: Optional[str] = Field(default=None, description="The error message")
+        parent_id: str | None = Field(default=None, description="Leave empty for root log")
+        error: str | None = Field(default=None, description="The error message")
         status: LogStatus = Field(..., description="The status of the log")
         data: Mapping[str, Any] = Field(..., description="Detailed log data")
-        metadata: Optional[Mapping[LogMetadata, Any]] = Field(default=None, description="The metadata of the log")
+        metadata: Mapping[LogMetadata, Any] | None = Field(default=None, description="The metadata of the log")
 
     class RetrieverResourceMessage(BaseModel):
         class RetrieverResource(BaseModel):
@@ -78,22 +78,22 @@ class InvokeMessage(BaseModel):
             Model class for retriever resource.
             """
 
-            position: Optional[int] = None
-            dataset_id: Optional[str] = None
-            dataset_name: Optional[str] = None
-            document_id: Optional[str] = None
-            document_name: Optional[str] = None
-            data_source_type: Optional[str] = None
-            segment_id: Optional[str] = None
-            retriever_from: Optional[str] = None
-            score: Optional[float] = None
-            hit_count: Optional[int] = None
-            word_count: Optional[int] = None
-            segment_position: Optional[int] = None
-            index_node_hash: Optional[str] = None
-            content: Optional[str] = None
-            page: Optional[int] = None
-            doc_metadata: Optional[dict] = None
+            position: int | None = None
+            dataset_id: str | None = None
+            dataset_name: str | None = None
+            document_id: str | None = None
+            document_name: str | None = None
+            data_source_type: str | None = None
+            segment_id: str | None = None
+            retriever_from: str | None = None
+            score: float | None = None
+            hit_count: int | None = None
+            word_count: int | None = None
+            segment_position: int | None = None
+            index_node_hash: str | None = None
+            content: str | None = None
+            page: int | None = None
+            doc_metadata: dict | None = None
 
         retriever_resources: list[RetrieverResource] = Field(..., description="retriever resources")
         context: str = Field(..., description="context")
@@ -124,7 +124,7 @@ class InvokeMessage(BaseModel):
         | RetrieverResourceMessage
         | None
     )
-    meta: Optional[dict] = None
+    meta: dict | None = None
 
     @field_validator("message", mode="before")
     @classmethod

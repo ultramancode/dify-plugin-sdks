@@ -1,14 +1,10 @@
-import base64
-import contextlib
-import uuid
 from collections.abc import Mapping
 from enum import Enum, StrEnum
-from typing import Any, Optional, Union
+from typing import Any, Union
 
 from pydantic import (
     BaseModel,
     Field,
-    field_serializer,
     field_validator,
     model_validator,
 )
@@ -24,12 +20,13 @@ from dify_plugin.entities.provider_config import CommonParameterType, ProviderCo
 
 class ToolRuntime(BaseModel):
     credentials: dict[str, Any]
-    user_id: Optional[str]
-    session_id: Optional[str]
+    user_id: str | None
+    session_id: str | None
 
 
 class ToolInvokeMessage(InvokeMessage):
     pass
+
 
 @docs(
     description="The identity of the tool",
@@ -94,21 +91,21 @@ class ToolParameter(BaseModel):
     label: I18nObject = Field(..., description="The label presented to the user")
     human_description: I18nObject = Field(..., description="The description presented to the user")
     type: ToolParameterType = Field(..., description="The type of the parameter")
-    auto_generate: Optional[ParameterAutoGenerate] = Field(
+    auto_generate: ParameterAutoGenerate | None = Field(
         default=None, description="The auto generate of the parameter"
     )
-    template: Optional[ParameterTemplate] = Field(default=None, description="The template of the parameter")
+    template: ParameterTemplate | None = Field(default=None, description="The template of the parameter")
     scope: str | None = None
     form: ToolParameterForm = Field(..., description="The form of the parameter, schema/form/llm")
-    llm_description: Optional[str] = None
-    required: Optional[bool] = False
-    default: Optional[Union[int, float, str]] = None
-    min: Optional[Union[float, int]] = None
-    max: Optional[Union[float, int]] = None
-    precision: Optional[int] = None
-    options: Optional[list[ParameterOption]] = None
+    llm_description: str | None = None
+    required: bool | None = False
+    default: Union[int, float, str] | None = None
+    min: Union[float, int] | None = None
+    max: Union[float, int] | None = None
+    precision: int | None = None
+    options: list[ParameterOption] | None = None
     # MCP object and array type parameters use this field to store the schema
-    input_schema: Optional[Mapping[str, Any]] = None
+    input_schema: Mapping[str, Any] | None = None
 
 
 @docs(
@@ -140,7 +137,7 @@ class ToolConfiguration(BaseModel):
     description: ToolDescription
     extra: ToolConfigurationExtra
     has_runtime_parameters: bool = Field(default=False, description="Whether the tool has runtime parameters")
-    output_schema: Optional[Mapping[str, Any]] = None
+    output_schema: Mapping[str, Any] | None = None
 
 
 @docs(
@@ -203,7 +200,7 @@ class ToolProviderConfiguration(BaseModel):
         alias="credentials_for_provider",
         description="The credentials schema of the tool provider",
     )
-    oauth_schema: Optional[OAuthSchema] = Field(
+    oauth_schema: OAuthSchema | None = Field(
         default=None,
         description="The OAuth schema of the tool provider if OAuth is supported",
     )
@@ -284,8 +281,8 @@ class ToolSelector(BaseModel):
         type: ToolParameter.ToolParameterType = Field(..., description="The type of the parameter")
         required: bool = Field(..., description="Whether the parameter is required")
         description: str = Field(..., description="The description of the parameter")
-        default: Optional[Union[int, float, str]] = None
-        options: Optional[list[ParameterOption]] = None
+        default: Union[int, float, str] | None = None
+        options: list[ParameterOption] | None = None
 
     provider_id: str = Field(..., description="The id of the provider")
     tool_name: str = Field(..., description="The name of the tool")

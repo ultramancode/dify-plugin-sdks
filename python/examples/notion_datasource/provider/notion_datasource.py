@@ -1,5 +1,6 @@
 import urllib
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 import requests
 from werkzeug import Request
@@ -86,7 +87,7 @@ class NotionDatasourceProvider(DatasourceProvider):
                 else:
                     return True
             except requests.RequestException as e:
-                raise ToolProviderCredentialValidationError(f"Network error when connecting to Notion API: {str(e)}")
+                raise ToolProviderCredentialValidationError(f"Network error when connecting to Notion API: {e!s}")
 
         except Exception as e:
             raise ToolProviderCredentialValidationError(str(e))

@@ -2,7 +2,7 @@ import base64
 import logging
 import uuid
 from collections.abc import Generator
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import RootModel
 from yarl import URL
@@ -12,12 +12,13 @@ from dify_plugin.config.logger_format import plugin_logger_handler
 from dify_plugin.core.entities.message import InitializeMessage
 from dify_plugin.core.entities.plugin.request import (
     AgentActions,
+    DatasourceActions,
     DynamicParameterActions,
     EndpointActions,
     ModelActions,
+    OAuthActions,
     PluginInvokeType,
     ToolActions,
-    OAuthActions,
 )
 from dify_plugin.core.plugin_executor import PluginExecutor
 from dify_plugin.core.plugin_registration import PluginRegistration
@@ -31,8 +32,6 @@ from dify_plugin.core.server.stdio.request_reader import StdioRequestReader
 from dify_plugin.core.server.stdio.response_writer import StdioResponseWriter
 from dify_plugin.core.server.tcp.request_reader import TCPReaderWriter
 from dify_plugin.entities.tool import ToolInvokeMessage
-
-from dify_plugin.core.entities.plugin.request import DatasourceActions
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -68,7 +67,7 @@ class Plugin(IOServer, Router):
         # register io routes
         self._register_request_routes()
 
-    def _launch_local_stream(self, config: DifyPluginEnv) -> tuple[RequestReader, Optional[ResponseWriter]]:
+    def _launch_local_stream(self, config: DifyPluginEnv) -> tuple[RequestReader, ResponseWriter | None]:
         """
         Launch local stream
         """
@@ -79,7 +78,7 @@ class Plugin(IOServer, Router):
         self._log_configuration()
         return reader, writer
 
-    def _launch_remote_stream(self, config: DifyPluginEnv) -> tuple[RequestReader, Optional[ResponseWriter]]:
+    def _launch_remote_stream(self, config: DifyPluginEnv) -> tuple[RequestReader, ResponseWriter | None]:
         """
         Launch remote stream
         """
@@ -186,7 +185,7 @@ class Plugin(IOServer, Router):
 
         self._log_configuration()
 
-    def _launch_serverless_stream(self, config: DifyPluginEnv) -> tuple[RequestReader, Optional[ResponseWriter]]:
+    def _launch_serverless_stream(self, config: DifyPluginEnv) -> tuple[RequestReader, ResponseWriter | None]:
         """
         Launch Serverless stream
         """
@@ -375,10 +374,10 @@ class Plugin(IOServer, Router):
         data: dict,
         reader: RequestReader,
         writer: ResponseWriter,
-        conversation_id: Optional[str] = None,
-        message_id: Optional[str] = None,
-        app_id: Optional[str] = None,
-        endpoint_id: Optional[str] = None,
+        conversation_id: str | None = None,
+        message_id: str | None = None,
+        app_id: str | None = None,
+        endpoint_id: str | None = None,
     ):
         """
         accept requests and execute

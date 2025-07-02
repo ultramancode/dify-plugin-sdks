@@ -1,18 +1,19 @@
 from abc import abstractmethod
-from collections.abc import Mapping, Generator
+from collections.abc import Generator, Mapping
 from typing import Any, final
 
 from dify_plugin.core.runtime import Session
 from dify_plugin.entities.datasource import (
+    DatasourceMessage,
     DatasourceRuntime,
     GetOnlineDocumentPageContentRequest,
-    OnlineDocumentPagesMessage, DataSourceMessage, OnlineDocumentInfo,
+    OnlineDocumentInfo,
+    OnlineDocumentPagesMessage,
 )
 from dify_plugin.interfaces.tool import ToolLike
 
 
-
-class OnlineDocumentDatasource(ToolLike[DataSourceMessage]):
+class OnlineDocumentDatasource(ToolLike[DatasourceMessage]):
     """
     Online Document Datasource abstract class
     """
@@ -34,7 +35,7 @@ class OnlineDocumentDatasource(ToolLike[DataSourceMessage]):
         """
         self.runtime = runtime
         self.session = session
-        self.response_type = DataSourceMessage
+        self.response_type = DatasourceMessage
 
     def create_pages_message(self, pages: list[OnlineDocumentInfo]) -> OnlineDocumentPagesMessage:
         return OnlineDocumentPagesMessage(result=pages)
@@ -46,20 +47,20 @@ class OnlineDocumentDatasource(ToolLike[DataSourceMessage]):
         return self._get_pages(datasource_parameters)
 
     @abstractmethod
-    def _get_pages(self, datasource_parameters: Mapping[str, Any]) ->  Generator[OnlineDocumentPagesMessage, None, None]:
+    def _get_pages(self, datasource_parameters: Mapping[str, Any]) -> Generator[OnlineDocumentPagesMessage, None, None]:
         """
         Get the pages
         """
         raise NotImplementedError("This method should be implemented by a subclass")
 
-    def get_content(self, page: GetOnlineDocumentPageContentRequest) -> Generator[DataSourceMessage, None, None]:
+    def get_content(self, page: GetOnlineDocumentPageContentRequest) -> Generator[DatasourceMessage, None, None]:
         """
         Get the content
         """
         return self._get_content(page)
 
     @abstractmethod
-    def _get_content(self, page: GetOnlineDocumentPageContentRequest) -> Generator[DataSourceMessage, None, None]:
+    def _get_content(self, page: GetOnlineDocumentPageContentRequest) -> Generator[DatasourceMessage, None, None]:
         """
         Get the content
         """

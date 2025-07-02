@@ -14,8 +14,8 @@ class I18nObject(BaseModel):
     Model class for i18n object.
     """
 
-    zh_Hans: Optional[str] = None
-    pt_BR: Optional[str] = None
+    zh_Hans: str | None = None
+    pt_BR: str | None = None
     en_US: str
 
     def __init__(self, **data):
@@ -35,7 +35,7 @@ class I18nObject(BaseModel):
 class ParameterOption(BaseModel):
     value: str = Field(..., description="The value of the option")
     label: I18nObject = Field(..., description="The label of the option")
-    icon: Optional[str] = Field(
+    icon: str | None = Field(
         default=None, description="The icon of the option, can be a URL or a base64 encoded string"
     )
 
@@ -46,6 +46,7 @@ class ParameterOption(BaseModel):
             return str(value)
         else:
             return value
+
 
 @docs(
     description="The auto generate of the parameter",

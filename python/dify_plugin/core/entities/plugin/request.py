@@ -1,6 +1,6 @@
 from collections.abc import Mapping
 from enum import StrEnum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, field_validator
 
@@ -161,8 +161,8 @@ class ModelInvokeLLMRequest(PluginAccessModelRequest, PromptMessageMixin):
     action: ModelActions = ModelActions.InvokeLLM
 
     model_parameters: dict[str, Any]
-    stop: Optional[list[str]]
-    tools: Optional[list[PromptMessageTool]]
+    stop: list[str] | None
+    tools: list[PromptMessageTool] | None
     stream: bool = True
 
     model_config = ConfigDict(protected_namespaces=())
@@ -171,7 +171,7 @@ class ModelInvokeLLMRequest(PluginAccessModelRequest, PromptMessageMixin):
 class ModelGetLLMNumTokens(PluginAccessModelRequest, PromptMessageMixin):
     action: ModelActions = ModelActions.GetLLMNumTokens
 
-    tools: Optional[list[PromptMessageTool]]
+    tools: list[PromptMessageTool] | None
 
 
 class ModelInvokeTextEmbeddingRequest(PluginAccessModelRequest):
@@ -191,8 +191,8 @@ class ModelInvokeRerankRequest(PluginAccessModelRequest):
 
     query: str
     docs: list[str]
-    score_threshold: Optional[float]
-    top_n: Optional[int]
+    score_threshold: float | None
+    top_n: int | None
 
 
 class ModelInvokeTTSRequest(PluginAccessModelRequest):
@@ -206,7 +206,7 @@ class ModelInvokeTTSRequest(PluginAccessModelRequest):
 class ModelGetTTSVoices(PluginAccessModelRequest):
     action: ModelActions = ModelActions.GetTTSVoices
 
-    language: Optional[str]
+    language: str | None
 
 
 class ModelInvokeSpeech2TextRequest(PluginAccessModelRequest):

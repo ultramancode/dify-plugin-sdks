@@ -1,5 +1,5 @@
 from enum import Enum, StrEnum
-from typing import Optional, Union
+from typing import Union
 
 from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
@@ -71,15 +71,15 @@ class DatasourceParameter(BaseModel):
 
     name: str = Field(..., description="The name of the parameter")
     label: I18nObject = Field(..., description="The label presented to the user")
-    placeholder: Optional[I18nObject] = Field(default=None, description="The placeholder presented to the user")
+    placeholder: I18nObject | None = Field(default=None, description="The placeholder presented to the user")
     scope: str | None = None
-    auto_generate: Optional[ParameterAutoGenerate] = None
-    template: Optional[ParameterTemplate] = None
+    auto_generate: ParameterAutoGenerate | None = None
+    template: ParameterTemplate | None = None
     required: bool = False
-    default: Optional[Union[float, int, str]] = None
-    min: Optional[Union[float, int]] = None
-    max: Optional[Union[float, int]] = None
-    precision: Optional[int] = None
+    default: Union[float, int, str] | None = None
+    min: Union[float, int] | None = None
+    max: Union[float, int] | None = None
+    precision: int | None = None
     options: list[ParameterOption] = Field(default_factory=list)
     type: DatasourceParameterType = Field(..., description="The type of the parameter")
     description: I18nObject = Field(..., description="The description of the parameter")
@@ -93,7 +93,7 @@ class DatasourceIdentity(BaseModel):
     author: str = Field(..., description="The author of the datasource")
     name: str = Field(..., description="The name of the datasource")
     label: I18nObject = Field(..., description="The label of the datasource")
-    icon: Optional[str] = None
+    icon: str | None = None
 
 
 @docs(
@@ -132,7 +132,7 @@ class DatasourceProviderIdentity(BaseModel):
     description: I18nObject = Field(..., description="The description of the datasource")
     icon: str = Field(..., description="The icon of the datasource")
     label: I18nObject = Field(..., description="The label of the datasource")
-    tags: Optional[list[DatasourceLabelEnum]] = Field(
+    tags: list[DatasourceLabelEnum] | None = Field(
         default=[],
         description="The tags of the datasource",
     )
@@ -163,7 +163,7 @@ class DatasourceProviderManifest(BaseModel):
     credentials_schema: list[ProviderConfig] = Field(
         default_factory=list, description="The credentials schema of the datasource provider"
     )
-    oauth_schema: Optional[OAuthSchema] = Field(
+    oauth_schema: OAuthSchema | None = Field(
         default=None, description="The OAuth schema of the datasource provider if OAuth is supported"
     )
     provider_type: DatasourceProviderType = Field(..., description="The type of the datasource provider")

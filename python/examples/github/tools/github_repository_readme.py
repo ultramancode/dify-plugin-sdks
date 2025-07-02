@@ -1,16 +1,16 @@
 import base64
-from typing import Any, Generator
+from collections.abc import Generator
+from typing import Any
 
 import requests
+
 from dify_plugin import Tool
 from dify_plugin.entities.tool import ToolInvokeMessage
 from dify_plugin.errors.model import InvokeError
 
 
 class GithubRepositoryReadmeTool(Tool):
-    def _invoke(
-            self, tool_parameters: dict[str, Any]
-    ) -> Generator[ToolInvokeMessage, None, None]:
+    def _invoke(self, tool_parameters: dict[str, Any]) -> Generator[ToolInvokeMessage, None, None]:
         """
         invoke tools
         """
@@ -48,14 +48,15 @@ class GithubRepositoryReadmeTool(Tool):
             )
             response_data = response.json()
             if response.status_code == 200:
-                if "base64" != response_data.get("encoding"):
+                if response_data.get("encoding") != "base64":
                     raise InvokeError(
-                        f"Can not get base64 encoded readme, response encoding is {response_data.get('encoding')}")
+                        f"Can not get base64 encoded readme, response encoding is {response_data.get('encoding')}"
+                    )
                 content = response_data.get("content")
                 if not content:
                     raise InvokeError("README content is empty")
                 decoded_bytes = base64.b64decode(content)
-                decoded_str = decoded_bytes.decode('utf-8')
+                decoded_str = decoded_bytes.decode("utf-8")
                 yield self.create_text_message(decoded_str)
             else:
                 raise InvokeError(f"Request failed: {response.status_code} {response_data.get('message')}")

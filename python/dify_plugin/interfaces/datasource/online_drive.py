@@ -4,7 +4,7 @@ from typing import final
 
 from dify_plugin.core.runtime import Session
 from dify_plugin.entities.datasource import (
-    DataSourceMessage,
+    DatasourceMessage,
     DatasourceRuntime,
     OnlineDriveBrowseFilesRequest,
     OnlineDriveBrowseFilesResponse,
@@ -13,7 +13,7 @@ from dify_plugin.entities.datasource import (
 from dify_plugin.interfaces.tool import ToolLike
 
 
-class OnlineDriveDatasource(ToolLike[DataSourceMessage]):
+class OnlineDriveDatasource(ToolLike[DatasourceMessage]):
     """
     Online Drive Datasource abstract class
     """
@@ -35,7 +35,7 @@ class OnlineDriveDatasource(ToolLike[DataSourceMessage]):
         """
         self.runtime = runtime
         self.session = session
-        self.response_type = DataSourceMessage
+        self.response_type = DatasourceMessage
 
     def browse_files(self, request: OnlineDriveBrowseFilesRequest) -> OnlineDriveBrowseFilesResponse:
         """
@@ -50,14 +50,14 @@ class OnlineDriveDatasource(ToolLike[DataSourceMessage]):
         """
         raise NotImplementedError("This method should be implemented by a subclass")
 
-    def download_file(self, request: OnlineDriveDownloadFileRequest) -> Generator[DataSourceMessage, None, None]:
+    def download_file(self, request: OnlineDriveDownloadFileRequest) -> Generator[DatasourceMessage, None, None]:
         """
         Get the file content
         """
         return self._download_file(request)
 
     @abstractmethod
-    def _download_file(self, request: OnlineDriveDownloadFileRequest) -> Generator[DataSourceMessage, None, None]:
+    def _download_file(self, request: OnlineDriveDownloadFileRequest) -> Generator[DatasourceMessage, None, None]:
         """
         Download the file content
         """

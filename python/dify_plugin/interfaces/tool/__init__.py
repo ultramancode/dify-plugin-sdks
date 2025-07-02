@@ -6,8 +6,8 @@ from typing_extensions import deprecated
 from werkzeug import Request
 
 from dify_plugin.core.runtime import Session
-from dify_plugin.entities.invoke_message import InvokeMessage
 from dify_plugin.entities import ParameterOption
+from dify_plugin.entities.invoke_message import InvokeMessage
 from dify_plugin.entities.provider_config import LogMetadata
 from dify_plugin.entities.tool import ToolInvokeMessage, ToolParameter, ToolRuntime, ToolSelector
 from dify_plugin.file.constants import DIFY_FILE_IDENTITY, DIFY_TOOL_SELECTOR_IDENTITY
@@ -60,7 +60,7 @@ class ToolLike(ABC, Generic[T]):
             message=InvokeMessage.TextMessage(text=link),
         )
 
-    def create_blob_message(self, blob: bytes, meta: Optional[dict] = None) -> T:
+    def create_blob_message(self, blob: bytes, meta: dict | None = None) -> T:
         """
         create a blob message
 
@@ -111,7 +111,7 @@ class ToolLike(ABC, Generic[T]):
         data: Mapping[str, Any],
         status: InvokeMessage.LogMessage.LogStatus = InvokeMessage.LogMessage.LogStatus.SUCCESS,
         parent: T | None = None,
-        metadata: Optional[Mapping[LogMetadata, Any]] = None,
+        metadata: Mapping[LogMetadata, Any] | None = None,
     ) -> T:
         """
         create a log message with status "start"
@@ -149,9 +149,9 @@ class ToolLike(ABC, Generic[T]):
         self,
         log: T,
         status: InvokeMessage.LogMessage.LogStatus = InvokeMessage.LogMessage.LogStatus.SUCCESS,
-        error: Optional[str] = None,
-        data: Optional[Mapping[str, Any]] = None,
-        metadata: Optional[Mapping[LogMetadata, Any]] = None,
+        error: str | None = None,
+        data: Mapping[str, Any] | None = None,
+        metadata: Mapping[LogMetadata, Any] | None = None,
     ) -> T:
         """
         mark log as finished
@@ -278,7 +278,7 @@ class Tool(ToolLike[ToolInvokeMessage]):
     def from_credentials(
         cls,
         credentials: dict,
-        user_id: Optional[str] = None,
+        user_id: str | None = None,
     ):
         return cls(
             runtime=ToolRuntime(credentials=credentials, user_id=user_id, session_id=None),

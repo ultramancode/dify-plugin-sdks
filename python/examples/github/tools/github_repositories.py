@@ -1,10 +1,13 @@
 import json
+from collections.abc import Generator
 from datetime import datetime
-from typing import Any, Generator
+from typing import Any
 from urllib.parse import quote
+
 import requests
-from dify_plugin.entities.tool import ToolInvokeMessage
+
 from dify_plugin import Tool
+from dify_plugin.entities.tool import ToolInvokeMessage
 
 
 class GithubRepositoriesTool(Tool):
@@ -69,4 +72,4 @@ class GithubRepositoriesTool(Tool):
             else:
                 yield self.create_text_message(response.json().get("message"))
         except Exception as e:
-            yield self.create_text_message("GitHub API Key and Api Version is invalid. {}".format(e))
+            yield self.create_text_message(f"GitHub API Key and Api Version is invalid. {e}")

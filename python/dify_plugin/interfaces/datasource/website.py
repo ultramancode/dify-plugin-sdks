@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from collections.abc import Mapping, Generator
+from collections.abc import Generator, Mapping
 from typing import Any, final
 
 from dify_plugin.core.runtime import Session
@@ -39,8 +39,9 @@ class WebsiteCrawlDatasource(ABC):
         return self._get_website_crawl(datasource_parameters)
 
     @abstractmethod
-    def _get_website_crawl(self, datasource_parameters: Mapping[str, Any]) -> Generator[
-        WebsiteCrawlMessage, None, None]:
+    def _get_website_crawl(
+        self, datasource_parameters: Mapping[str, Any]
+    ) -> Generator[WebsiteCrawlMessage, None, None]:
         """
         Get the website crawl result
         """
