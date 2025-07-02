@@ -6,10 +6,10 @@ from dify_plugin.core.runtime import Session
 from dify_plugin.core.server.stdio.request_reader import StdioRequestReader
 from dify_plugin.core.server.stdio.response_writer import StdioResponseWriter
 from dify_plugin.entities.datasource import (
+    DatasourceGetPagesResponse,
     DatasourceMessage,
     DatasourceRuntime,
     GetOnlineDocumentPageContentRequest,
-    OnlineDocumentPagesMessage,
 )
 from dify_plugin.interfaces.datasource.online_document import OnlineDocumentDatasource
 from dify_plugin.interfaces.datasource.website import WebsiteCrawlDatasource
@@ -47,8 +47,8 @@ def test_construct_online_document_datasource():
     """
 
     class OnlineDocument(OnlineDocumentDatasource):
-        def _get_pages(self, datasource_parameters: Mapping[str, Any]) -> OnlineDocumentPagesMessage:
-            return OnlineDocumentPagesMessage(result=[])
+        def _get_pages(self, datasource_parameters: Mapping[str, Any]) -> DatasourceGetPagesResponse:
+            return DatasourceGetPagesResponse(result=[])
 
         def _get_content(self, page: GetOnlineDocumentPageContentRequest) -> Generator[DatasourceMessage, None, None]:
             yield DatasourceMessage(

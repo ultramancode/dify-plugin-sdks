@@ -76,12 +76,12 @@ class OnlineDocumentInfo(BaseModel):
     pages: list[OnlineDocumentPage] = Field(..., description="The pages of the online document")
 
 
-class OnlineDocumentPagesMessage(BaseModel):
+class DatasourceGetPagesResponse(BaseModel):
     """
     Get online document pages response
     """
 
-    result: list[OnlineDocumentInfo]
+    result: list[OnlineDocumentInfo] = Field(..., description="The pages of the online document")
 
 
 class GetOnlineDocumentPageContentRequest(BaseModel):

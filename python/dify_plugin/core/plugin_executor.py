@@ -432,7 +432,7 @@ class PluginExecutor:
             session=session,
         )
 
-        return datasource_instance.get_pages(data.datasource_parameters)
+        yield datasource_instance.get_pages(data.datasource_parameters)
 
     def datasource_get_page_content(self, session: Session, data: DatasourceGetPageContentRequest):
         datasource_cls = self.registration.get_online_document_datasource_cls(data.provider, data.datasource)
