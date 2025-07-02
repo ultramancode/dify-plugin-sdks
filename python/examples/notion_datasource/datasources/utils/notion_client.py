@@ -71,6 +71,7 @@ class NotionClient:
                     headers=self.headers,
                     params=params,
                     json=json_data,
+                    timeout=10,
                 )
 
                 # Handle rate limiting
@@ -483,11 +484,7 @@ class NotionClient:
             # get database detail
         for database_result in database_results:
             page_id = database_result["id"]
-            if len(database_result["title"]) > 0:
-                page_name = database_result["title"][0]["plain_text"]
-            else:
-                page_name = "Untitled"
-
+            page_name = database_result["title"][0]["plain_text"] if len(database_result["title"]) > 0 else "Untitled"
             page_icon = database_result["icon"]
             if page_icon:
                 icon_type = page_icon["type"]
@@ -536,7 +533,7 @@ class NotionClient:
                 "Notion-Version": self._API_VERSION,
             }
 
-            response = requests.post(url=self._NOTION_PAGE_SEARCH, json=data, headers=headers)
+            response = requests.post(url=self._NOTION_PAGE_SEARCH, json=data, headers=headers, timeout=10)
             response_json = response.json()
 
             results.extend(response_json.get("results", []))
@@ -561,7 +558,7 @@ class NotionClient:
                 "Authorization": f"Bearer {access_token}",
                 "Notion-Version": self._API_VERSION,
             }
-            response = requests.post(url=self._NOTION_PAGE_SEARCH, json=data, headers=headers)
+            response = requests.post(url=self._NOTION_PAGE_SEARCH, json=data, headers=headers, timeout=10)
             response_json = response.json()
 
             results.extend(response_json.get("results", []))
@@ -576,7 +573,7 @@ class NotionClient:
             "Authorization": f"Bearer {access_token}",
             "Notion-Version": self._API_VERSION,
         }
-        response = requests.get(url=f"{self._NOTION_BLOCK_SEARCH}/{block_id}", headers=headers)
+        response = requests.get(url=f"{self._NOTION_BLOCK_SEARCH}/{block_id}", headers=headers, timeout=10)
         response_json = response.json()
         if response.status_code != 200:
             message = response_json.get("message", "unknown error")

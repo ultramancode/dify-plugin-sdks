@@ -63,4 +63,4 @@ class GithubRepositoryReadmeTool(Tool):
         except InvokeError as e:
             raise e
         except Exception as e:
-            raise InvokeError(f"Request failed: {e}")
+            raise InvokeError(f"Request failed: {e}") from e

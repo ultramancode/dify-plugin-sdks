@@ -5,7 +5,7 @@ from typing import Any
 import requests
 from werkzeug import Request
 
-from dify_plugin.errors.tool import ToolProviderCredentialValidationError
+from dify_plugin.errors.tool import DatasourceCredentialValidationError
 from dify_plugin.interfaces.datasource import DatasourceProvider
 
 
@@ -64,7 +64,7 @@ class NotionDatasourceProvider(DatasourceProvider):
         try:
             # Check if integration_token is provided
             if "integration_secret" not in credentials or not credentials.get("integration_secret"):
-                raise ToolProviderCredentialValidationError("Notion Integration Token is required.")
+                raise DatasourceCredentialValidationError("Notion Integration Token is required.")
 
             # Try to authenticate with Notion API by making a test request
             integration_secret = credentials.get("integration_secret")
@@ -77,17 +77,17 @@ class NotionDatasourceProvider(DatasourceProvider):
                     "Content-Type": "application/json",
                 }
                 # Make a request to the users endpoint to validate the token
-                response = requests.get("https://api.notion.com/v1/users/me", headers=headers)
+                response = requests.get("https://api.notion.com/v1/users/me", headers=headers, timeout=10)
                 if response.status_code == 401:
-                    raise ToolProviderCredentialValidationError("Invalid Notion Integration Token.")
+                    raise DatasourceCredentialValidationError("Invalid Notion Integration Token.")
                 elif response.status_code != 200:
-                    raise ToolProviderCredentialValidationError(
+                    raise DatasourceCredentialValidationError(
                         f"Failed to connect to Notion API: {response.status_code} {response.text}"
                     )
                 else:
                     return True
             except requests.RequestException as e:
-                raise ToolProviderCredentialValidationError(f"Network error when connecting to Notion API: {e!s}")
+                raise DatasourceCredentialValidationError(f"Network error when connecting to Notion API: {e!s}") from e
 
         except Exception as e:
-            raise ToolProviderCredentialValidationError(str(e))
+            raise DatasourceCredentialValidationError(str(e)) from e

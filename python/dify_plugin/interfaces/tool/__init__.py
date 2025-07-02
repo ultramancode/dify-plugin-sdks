@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from collections.abc import Generator, Mapping
-from typing import Any, Generic, Optional, TypeVar, final
+from typing import Any, Generic, TypeVar, final
 
 from typing_extensions import deprecated
 from werkzeug import Request

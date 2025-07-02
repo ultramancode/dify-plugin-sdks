@@ -1,4 +1,3 @@
-from functools import lru_cache
 from typing import Any
 
 from datasources.utils.notion_client import NotionClient
@@ -34,7 +33,7 @@ class NotionExtractor:
             raise ValueError("Notion object type not supported")
         return extractor_result
 
-    def _get_notion_database_data(self, database_id: str, query_dict: dict[str, Any] = {}) -> str:
+    def _get_notion_database_data(self, database_id: str) -> str:
         """Fetch all pages from a Notion database and return as a Markdown table."""
         assert self._notion_access_token is not None, "Notion access token is required"
 
@@ -130,7 +129,7 @@ class NotionExtractor:
         md_content = "\n".join(result_lines_arr)
         return md_content
 
-    @lru_cache(maxsize=128)
+    # @lru_cache(maxsize=128)
     def _read_block(self, block_id: str, num_tabs: int = 0) -> str:
         """Read a block and its children with caching."""
         data = self._paginate(self._client.retrieve_block_children, block_id=block_id)

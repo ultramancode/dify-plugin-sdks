@@ -56,9 +56,7 @@ class PluginResourceRequirements(BaseModel):
             )
             rerank: bool | None = Field(default=False, description="Whether to enable invocation of rerank")
             tts: bool | None = Field(default=False, description="Whether to enable invocation of tts")
-            speech2text: bool | None = Field(
-                default=False, description="Whether to enable invocation of speech2text"
-            )
+            speech2text: bool | None = Field(default=False, description="Whether to enable invocation of speech2text")
             moderation: bool | None = Field(default=False, description="Whether to enable invocation of moderation")
 
         @docs(

@@ -1,7 +1,7 @@
 import logging
 from abc import abstractmethod
 from collections.abc import Generator, Mapping
-from typing import Any, Optional, Union, final
+from typing import Any, Union, final
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
 

@@ -65,9 +65,7 @@ class AgentStrategyParameter(BaseModel):
     label: I18nObject = Field(..., description="The label presented to the user")
     help: I18nObject | None = None
     type: ToolParameterType = Field(..., description="The type of the parameter")
-    auto_generate: ParameterAutoGenerate | None = Field(
-        default=None, description="The auto generate of the parameter"
-    )
+    auto_generate: ParameterAutoGenerate | None = Field(default=None, description="The auto generate of the parameter")
     template: ParameterTemplate | None = Field(default=None, description="The template of the parameter")
     scope: str | None = None
     required: bool | None = False

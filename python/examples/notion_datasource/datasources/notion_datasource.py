@@ -55,7 +55,7 @@ class NotionDataSource(OnlineDocumentDatasource):
             )
             online_document_res = notion_extractor.extract()
         except Exception as e:
-            raise ValueError(str(e))
+            raise ValueError(str(e)) from e
         print(online_document_res)
         yield self.create_variable_message("page_id", online_document_res["page_id"])
         yield self.create_variable_message("content", online_document_res["content"])
@@ -66,12 +66,11 @@ class NotionDataSource(OnlineDocumentDatasource):
             "Authorization": f"Bearer {access_token}",
             "Notion-Version": self._API_VERSION,
         }
-        response = requests.get(url=self._NOTION_BOT_USER, headers=headers)
+        response = requests.get(url=self._NOTION_BOT_USER, headers=headers, timeout=10)
         response_json = response.json()
         if "object" in response_json and response_json["object"] == "user":
             user_type = response_json["type"]
             user_info = response_json[user_type]
             if "workspace_name" in user_info:
-                if user_info["workspace_name"]:
-                    return user_info["workspace_name"]
+                return user_info["workspace_name"]
         return "workspace"

@@ -171,9 +171,7 @@ class AIModel(ABC):
 
         return None
 
-    def get_customizable_model_schema_from_credentials(
-        self, model: str, credentials: Mapping
-    ) -> AIModelEntity | None:
+    def get_customizable_model_schema_from_credentials(self, model: str, credentials: Mapping) -> AIModelEntity | None:
         """
         Get customizable model schema from credentials
 

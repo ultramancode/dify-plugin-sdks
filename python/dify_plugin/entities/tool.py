@@ -91,9 +91,7 @@ class ToolParameter(BaseModel):
     label: I18nObject = Field(..., description="The label presented to the user")
     human_description: I18nObject = Field(..., description="The description presented to the user")
     type: ToolParameterType = Field(..., description="The type of the parameter")
-    auto_generate: ParameterAutoGenerate | None = Field(
-        default=None, description="The auto generate of the parameter"
-    )
+    auto_generate: ParameterAutoGenerate | None = Field(default=None, description="The auto generate of the parameter")
     template: ParameterTemplate | None = Field(default=None, description="The template of the parameter")
     scope: str | None = None
     form: ToolParameterForm = Field(..., description="The form of the parameter, schema/form/llm")
