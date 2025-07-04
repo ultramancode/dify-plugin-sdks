@@ -9,6 +9,7 @@ from dify_plugin.entities.datasource import (
     OnlineDriveBrowseFilesRequest,
     OnlineDriveDownloadFileRequest,
 )
+from dify_plugin.entities.provider_config import CredentialType
 from dify_plugin.entities.model import ModelType
 from dify_plugin.entities.model.message import (
     AssistantPromptMessage,
@@ -93,6 +94,7 @@ class ToolInvokeRequest(PluginAccessRequest):
     provider: str
     tool: str
     credentials: dict
+    credential_type: CredentialType
     tool_parameters: dict[str, Any]
 
 

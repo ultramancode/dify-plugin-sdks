@@ -8,6 +8,7 @@ import requests
 
 from dify_plugin import Tool
 from dify_plugin.entities.tool import ToolInvokeMessage
+from dify_plugin.entities.provider_config import CredentialType
 
 
 class GithubRepositoriesTool(Tool):
@@ -17,14 +18,22 @@ class GithubRepositoriesTool(Tool):
         """
         top_n = tool_parameters.get("top_n", 5)
         query = tool_parameters.get("query", "")
+        credential_type = self.runtime.credential_type
         if not query:
             yield self.create_text_message("Please input symbol")
-        if "access_tokens" not in self.runtime.credentials or not self.runtime.credentials.get("access_tokens"):
-            yield self.create_text_message("GitHub API Access Tokens is required.")
+        if credential_type == CredentialType.API_KEY:
+            if "access_tokens" not in self.runtime.credentials or not self.runtime.credentials.get("access_tokens"):
+                yield self.create_text_message("GitHub API Access Tokens is required.")
+
+        if credential_type == CredentialType.OAUTH:
+            if "access_tokens" not in self.runtime.credentials or not self.runtime.credentials.get("access_tokens"):
+                yield self.create_text_message("GitHub OAuth Access Tokens is required.")
+
         if "api_version" not in self.runtime.credentials or not self.runtime.credentials.get("api_version"):
             api_version = "2022-11-28"
         else:
             api_version = self.runtime.credentials.get("api_version")
+
         try:
             headers = {
                 "Content-Type": "application/vnd.github+json",
