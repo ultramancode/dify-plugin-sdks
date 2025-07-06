@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from collections.abc import Generator, Mapping
-from typing import Any, Generic, Optional, TypeVar, final
+from typing import Any, Generic, TypeVar, final
 
 from typing_extensions import deprecated
 from werkzeug import Request
@@ -59,7 +59,7 @@ class ToolLike(ABC, Generic[T]):
             message=ToolInvokeMessage.TextMessage(text=link),
         )
 
-    def create_blob_message(self, blob: bytes, meta: Optional[dict] = None) -> T:
+    def create_blob_message(self, blob: bytes, meta: dict | None = None) -> T:
         """
         create a blob message
 
@@ -110,7 +110,7 @@ class ToolLike(ABC, Generic[T]):
         data: Mapping[str, Any],
         status: ToolInvokeMessage.LogMessage.LogStatus = ToolInvokeMessage.LogMessage.LogStatus.SUCCESS,
         parent: T | None = None,
-        metadata: Optional[Mapping[LogMetadata, Any]] = None,
+        metadata: Mapping[LogMetadata, Any] | None = None,
     ) -> T:
         """
         create a log message with status "start"
@@ -148,9 +148,9 @@ class ToolLike(ABC, Generic[T]):
         self,
         log: T,
         status: ToolInvokeMessage.LogMessage.LogStatus = ToolInvokeMessage.LogMessage.LogStatus.SUCCESS,
-        error: Optional[str] = None,
-        data: Optional[Mapping[str, Any]] = None,
-        metadata: Optional[Mapping[LogMetadata, Any]] = None,
+        error: str | None = None,
+        data: Mapping[str, Any] | None = None,
+        metadata: Mapping[LogMetadata, Any] | None = None,
     ) -> T:
         """
         mark log as finished
@@ -273,7 +273,7 @@ class Tool(ToolLike[ToolInvokeMessage]):
     def from_credentials(
         cls,
         credentials: dict,
-        user_id: Optional[str] = None,
+        user_id: str | None = None,
     ):
         return cls(
             runtime=ToolRuntime(credentials=credentials, user_id=user_id, session_id=None),

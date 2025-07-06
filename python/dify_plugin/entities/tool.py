@@ -3,7 +3,7 @@ import contextlib
 import uuid
 from collections.abc import Mapping
 from enum import Enum, StrEnum
-from typing import Any, Optional, Union
+from typing import Any, Union
 
 from pydantic import (
     BaseModel,
@@ -23,8 +23,8 @@ from dify_plugin.entities.provider_config import CommonParameterType, LogMetadat
 
 class ToolRuntime(BaseModel):
     credentials: dict[str, Any]
-    user_id: Optional[str]
-    session_id: Optional[str]
+    user_id: str | None
+    session_id: str | None
 
 
 class ToolInvokeMessage(BaseModel):
@@ -77,11 +77,11 @@ class ToolInvokeMessage(BaseModel):
 
         id: str = Field(default_factory=lambda: str(uuid.uuid4()), description="The id of the log")
         label: str = Field(..., description="The label of the log")
-        parent_id: Optional[str] = Field(default=None, description="Leave empty for root log")
-        error: Optional[str] = Field(default=None, description="The error message")
+        parent_id: str | None = Field(default=None, description="Leave empty for root log")
+        error: str | None = Field(default=None, description="The error message")
         status: LogStatus = Field(..., description="The status of the log")
         data: Mapping[str, Any] = Field(..., description="Detailed log data")
-        metadata: Optional[Mapping[LogMetadata, Any]] = Field(default=None, description="The metadata of the log")
+        metadata: Mapping[LogMetadata, Any] | None = Field(default=None, description="The metadata of the log")
 
     class RetrieverResourceMessage(BaseModel):
         class RetrieverResource(BaseModel):
@@ -89,22 +89,22 @@ class ToolInvokeMessage(BaseModel):
             Model class for retriever resource.
             """
 
-            position: Optional[int] = None
-            dataset_id: Optional[str] = None
-            dataset_name: Optional[str] = None
-            document_id: Optional[str] = None
-            document_name: Optional[str] = None
-            data_source_type: Optional[str] = None
-            segment_id: Optional[str] = None
-            retriever_from: Optional[str] = None
-            score: Optional[float] = None
-            hit_count: Optional[int] = None
-            word_count: Optional[int] = None
-            segment_position: Optional[int] = None
-            index_node_hash: Optional[str] = None
-            content: Optional[str] = None
-            page: Optional[int] = None
-            doc_metadata: Optional[dict] = None
+            position: int | None = None
+            dataset_id: str | None = None
+            dataset_name: str | None = None
+            document_id: str | None = None
+            document_name: str | None = None
+            data_source_type: str | None = None
+            segment_id: str | None = None
+            retriever_from: str | None = None
+            score: float | None = None
+            hit_count: int | None = None
+            word_count: int | None = None
+            segment_position: int | None = None
+            index_node_hash: str | None = None
+            content: str | None = None
+            page: int | None = None
+            doc_metadata: dict | None = None
 
         retriever_resources: list[RetrieverResource] = Field(..., description="retriever resources")
         context: str = Field(..., description="context")
@@ -135,7 +135,7 @@ class ToolInvokeMessage(BaseModel):
         | RetrieverResourceMessage
         | None
     )
-    meta: Optional[dict] = None
+    meta: dict | None = None
 
     @field_validator("message", mode="before")
     @classmethod
@@ -223,21 +223,19 @@ class ToolParameter(BaseModel):
     label: I18nObject = Field(..., description="The label presented to the user")
     human_description: I18nObject = Field(..., description="The description presented to the user")
     type: ToolParameterType = Field(..., description="The type of the parameter")
-    auto_generate: Optional[ParameterAutoGenerate] = Field(
-        default=None, description="The auto generate of the parameter"
-    )
-    template: Optional[ParameterTemplate] = Field(default=None, description="The template of the parameter")
+    auto_generate: ParameterAutoGenerate | None = Field(default=None, description="The auto generate of the parameter")
+    template: ParameterTemplate | None = Field(default=None, description="The template of the parameter")
     scope: str | None = None
     form: ToolParameterForm = Field(..., description="The form of the parameter, schema/form/llm")
-    llm_description: Optional[str] = None
-    required: Optional[bool] = False
-    default: Optional[Union[int, float, str]] = None
-    min: Optional[Union[float, int]] = None
-    max: Optional[Union[float, int]] = None
-    precision: Optional[int] = None
-    options: Optional[list[ToolParameterOption]] = None
+    llm_description: str | None = None
+    required: bool | None = False
+    default: Union[int, float, str] | None = None
+    min: Union[float, int] | None = None
+    max: Union[float, int] | None = None
+    precision: int | None = None
+    options: list[ToolParameterOption] | None = None
     # MCP object and array type parameters use this field to store the schema
-    input_schema: Optional[Mapping[str, Any]] = None
+    input_schema: Mapping[str, Any] | None = None
 
 
 @docs(
@@ -269,7 +267,7 @@ class ToolConfiguration(BaseModel):
     description: ToolDescription
     extra: ToolConfigurationExtra
     has_runtime_parameters: bool = Field(default=False, description="Whether the tool has runtime parameters")
-    output_schema: Optional[Mapping[str, Any]] = None
+    output_schema: Mapping[str, Any] | None = None
 
 
 @docs(
@@ -332,7 +330,7 @@ class ToolProviderConfiguration(BaseModel):
         alias="credentials_for_provider",
         description="The credentials schema of the tool provider",
     )
-    oauth_schema: Optional[OAuthSchema] = Field(
+    oauth_schema: OAuthSchema | None = Field(
         default=None,
         description="The OAuth schema of the tool provider if OAuth is supported",
     )
@@ -413,8 +411,8 @@ class ToolSelector(BaseModel):
         type: ToolParameter.ToolParameterType = Field(..., description="The type of the parameter")
         required: bool = Field(..., description="Whether the parameter is required")
         description: str = Field(..., description="The description of the parameter")
-        default: Optional[Union[int, float, str]] = None
-        options: Optional[list[ToolParameterOption]] = None
+        default: Union[int, float, str] | None = None
+        options: list[ToolParameterOption] | None = None
 
     provider_id: str = Field(..., description="The id of the provider")
     tool_name: str = Field(..., description="The name of the tool")
