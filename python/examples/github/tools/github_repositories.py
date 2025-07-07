@@ -7,8 +7,8 @@ from urllib.parse import quote
 import requests
 
 from dify_plugin import Tool
-from dify_plugin.entities.tool import ToolInvokeMessage
 from dify_plugin.entities.provider_config import CredentialType
+from dify_plugin.entities.tool import ToolInvokeMessage
 
 
 class GithubRepositoriesTool(Tool):
