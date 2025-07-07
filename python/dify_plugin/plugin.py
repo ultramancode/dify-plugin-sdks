@@ -15,6 +15,7 @@ from dify_plugin.core.entities.plugin.request import (
     DynamicParameterActions,
     EndpointActions,
     ModelActions,
+    OAuthActions,
     PluginInvokeType,
     ToolActions,
 )
@@ -307,6 +308,18 @@ class Plugin(IOServer, Router):
             self.plugin_executer.fetch_parameter_options,
             lambda data: data.get("type") == PluginInvokeType.DynamicParameter.value
             and data.get("action") == DynamicParameterActions.FetchParameterOptions.value,
+        )
+
+        self.register_route(
+            self.plugin_executer.get_oauth_authorization_url,
+            lambda data: data.get("type") == PluginInvokeType.OAuth.value
+            and data.get("action") == OAuthActions.GetAuthorizationUrl.value,
+        )
+
+        self.register_route(
+            self.plugin_executer.get_oauth_credentials,
+            lambda data: data.get("type") == PluginInvokeType.OAuth.value
+            and data.get("action") == OAuthActions.GetCredentials.value,
         )
 
     def _execute_request(

@@ -14,6 +14,7 @@ from dify_plugin.entities.model.message import (
     ToolPromptMessage,
     UserPromptMessage,
 )
+from dify_plugin.entities.provider_config import CredentialType
 
 
 class PluginInvokeType(StrEnum):
@@ -78,6 +79,7 @@ class ToolInvokeRequest(PluginAccessRequest):
     provider: str
     tool: str
     credentials: dict
+    credential_type: CredentialType = CredentialType.API_KEY
     tool_parameters: dict[str, Any]
 
 
@@ -241,17 +243,19 @@ class EndpointInvokeRequest(BaseModel):
     raw_http_request: str
 
 
-class OAuthGetAuthorizationUrlRequest(BaseModel):
+class OAuthGetAuthorizationUrlRequest(PluginAccessRequest):
     type: PluginInvokeType = PluginInvokeType.OAuth
     action: OAuthActions = OAuthActions.GetAuthorizationUrl
     provider: str
+    redirect_uri: str
     system_credentials: Mapping[str, Any]
 
 
-class OAuthGetCredentialsRequest(BaseModel):
+class OAuthGetCredentialsRequest(PluginAccessRequest):
     type: PluginInvokeType = PluginInvokeType.OAuth
     action: OAuthActions = OAuthActions.GetCredentials
     provider: str
+    redirect_uri: str
     system_credentials: Mapping[str, Any]
     raw_http_request: str
 

@@ -40,7 +40,6 @@ from dify_plugin.interfaces.model.rerank_model import RerankModel
 from dify_plugin.interfaces.model.speech2text_model import Speech2TextModel
 from dify_plugin.interfaces.model.text_embedding_model import TextEmbeddingModel
 from dify_plugin.interfaces.model.tts_model import TTSModel
-from dify_plugin.interfaces.tool import ToolProvider
 from dify_plugin.protocol.dynamic_select import DynamicSelectProtocol
 from dify_plugin.protocol.oauth import OAuthProviderProtocol
 
@@ -73,6 +72,7 @@ class PluginExecutor:
         tool = tool_cls(
             runtime=ToolRuntime(
                 credentials=request.credentials,
+                credential_type=request.credential_type,
                 user_id=request.user_id,
                 session_id=session.session_id,
             ),
@@ -333,16 +333,15 @@ class PluginExecutor:
         if provider_cls is None:
             raise ValueError(f"Provider `{provider}` does not support OAuth")
 
-        if provider_cls == ToolProvider:
-            return provider_cls()
-
-        raise ValueError(f"Provider `{provider}` does not support OAuth")
+        return provider_cls()
 
     def get_oauth_authorization_url(self, session: Session, data: OAuthGetAuthorizationUrlRequest):
         provider_instance = self._get_oauth_provider_instance(data.provider)
 
         return {
-            "authorization_url": provider_instance.oauth_get_authorization_url(data.system_credentials),
+            "authorization_url": provider_instance.oauth_get_authorization_url(
+                data.redirect_uri, data.system_credentials
+            ),
         }
 
     def get_oauth_credentials(self, session: Session, data: OAuthGetCredentialsRequest):
@@ -351,7 +350,7 @@ class PluginExecutor:
         request = parse_raw_request(bytes_data)
 
         return {
-            "credentials": provider_instance.oauth_get_credentials(data.system_credentials, request),
+            "credentials": provider_instance.oauth_get_credentials(data.redirect_uri, data.system_credentials, request),
         }
 
     def _get_dynamic_parameter_action(

@@ -18,11 +18,12 @@ from dify_plugin.core.utils.yaml_loader import load_yaml_file
 from dify_plugin.entities import I18nObject, ParameterOption
 from dify_plugin.entities.model.message import PromptMessageTool
 from dify_plugin.entities.oauth import OAuthSchema
-from dify_plugin.entities.provider_config import CommonParameterType, LogMetadata, ProviderConfig
+from dify_plugin.entities.provider_config import CommonParameterType, CredentialType, LogMetadata, ProviderConfig
 
 
 class ToolRuntime(BaseModel):
     credentials: dict[str, Any]
+    credential_type: CredentialType = CredentialType.API_KEY
     user_id: str | None
     session_id: str | None
 

@@ -118,3 +118,8 @@ class ProviderConfig(BaseModel):
     help: I18nObject | None = None
     url: str | None = None
     placeholder: I18nObject | None = None
+
+
+class CredentialType(Enum):
+    API_KEY = "api-key"
+    OAUTH = "oauth2"
