@@ -368,6 +368,18 @@ class Plugin(IOServer, Router):
             and data.get("action") == DynamicParameterActions.FetchParameterOptions.value,
         )
 
+        self.register_route(
+            self.plugin_executer.get_oauth_authorization_url,
+            lambda data: data.get("type") == PluginInvokeType.OAuth.value
+            and data.get("action") == OAuthActions.GetAuthorizationUrl.value,
+        )
+
+        self.register_route(
+            self.plugin_executer.get_oauth_credentials,
+            lambda data: data.get("type") == PluginInvokeType.OAuth.value
+            and data.get("action") == OAuthActions.GetCredentials.value,
+        )
+
     def _execute_request(
         self,
         session_id: str,

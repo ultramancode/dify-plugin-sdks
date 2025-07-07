@@ -21,13 +21,15 @@ class GithubRepositoriesTool(Tool):
         credential_type = self.runtime.credential_type
         if not query:
             yield self.create_text_message("Please input symbol")
-        if credential_type == CredentialType.API_KEY:
-            if "access_tokens" not in self.runtime.credentials or not self.runtime.credentials.get("access_tokens"):
-                yield self.create_text_message("GitHub API Access Tokens is required.")
+        if (
+            credential_type == CredentialType.API_KEY and "access_tokens" not in self.runtime.credentials
+        ) or not self.runtime.credentials.get("access_tokens"):
+            yield self.create_text_message("GitHub API Access Tokens is required.")
 
-        if credential_type == CredentialType.OAUTH:
-            if "access_tokens" not in self.runtime.credentials or not self.runtime.credentials.get("access_tokens"):
-                yield self.create_text_message("GitHub OAuth Access Tokens is required.")
+        if (
+            credential_type == CredentialType.OAUTH and "access_tokens" not in self.runtime.credentials
+        ) or not self.runtime.credentials.get("access_tokens"):
+            yield self.create_text_message("GitHub OAuth Access Tokens is required.")
 
         if "api_version" not in self.runtime.credentials or not self.runtime.credentials.get("api_version"):
             api_version = "2022-11-28"

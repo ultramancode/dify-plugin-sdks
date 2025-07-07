@@ -8,9 +8,14 @@ from dify_plugin.core.documentation.schema_doc import docs
 from dify_plugin.core.utils.yaml_loader import load_yaml_file
 from dify_plugin.entities import I18nObject, ParameterAutoGenerate, ParameterOption, ParameterTemplate
 from dify_plugin.entities.invoke_message import InvokeMessage
+from dify_plugin.entities import I18nObject
+from dify_plugin.entities.invoke_message import InvokeMessage
 from dify_plugin.entities.tool import (
     CommonParameterType,
+    ParameterAutoGenerate,
+    ParameterTemplate,
     ToolIdentity,
+    ToolParameterOption,
     ToolProviderIdentity,
 )
 

@@ -15,7 +15,11 @@ from dify_plugin.entities import I18nObject, ParameterOption
 from dify_plugin.entities.invoke_message import InvokeMessage
 from dify_plugin.entities.model.message import PromptMessageTool
 from dify_plugin.entities.oauth import OAuthSchema
-from dify_plugin.entities.provider_config import CommonParameterType, CredentialType, ProviderConfig
+from dify_plugin.entities.provider_config import (
+    CommonParameterType,
+    CredentialType,
+    ProviderConfig,
+)
 
 
 class ToolRuntime(BaseModel):

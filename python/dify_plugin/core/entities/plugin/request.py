@@ -20,6 +20,7 @@ from dify_plugin.entities.model.message import (
     ToolPromptMessage,
     UserPromptMessage,
 )
+from dify_plugin.entities.provider_config import CredentialType
 
 
 class PluginInvokeType(StrEnum):
@@ -94,7 +95,7 @@ class ToolInvokeRequest(PluginAccessRequest):
     provider: str
     tool: str
     credentials: dict
-    credential_type: CredentialType
+    credential_type: CredentialType = CredentialType.API_KEY
     tool_parameters: dict[str, Any]
 
 
