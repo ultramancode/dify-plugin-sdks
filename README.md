@@ -21,10 +21,10 @@ For the manifest specification, we've introduced two versioning fields:
 
 ### Meta.Version Reference
 
-| Manifest Version | Description                            |
-| ---------------- | -------------------------------------- |
-| 0.0.2            | Agent strategy plugin support MCP tool |
-| 0.0.1            | Initial release                        |
+| Manifest Version | Description                                                                                                                                                                                                                   |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0.0.2            | As `ToolProviderType` now supports `mcp`, an elder implementation is going to broken when user selected a `mcp` tool in Dify, so we bump it to 0.0.2 to ensure Dify knows that `mcp` is disabled if meta.version under 0.0.2. |
+| 0.0.1            | Initial release                                                                                                                                                                                                               |
 
 ### Meta.MinimumDifyVersion Reference
 
