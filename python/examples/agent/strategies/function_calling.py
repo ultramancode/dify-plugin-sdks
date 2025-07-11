@@ -271,6 +271,7 @@ class FunctionCallingAgentStrategy(AgentStrategy):
                                 **tool_instance.runtime_parameters,
                                 **tool_call_args,
                             },
+                            credential_id=tool_instance.credential_id,
                         )
                         tool_result = ""
                         for tool_invoke_response in tool_invoke_responses:

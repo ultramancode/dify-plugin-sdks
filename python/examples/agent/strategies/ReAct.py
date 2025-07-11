@@ -14,8 +14,8 @@ from dify_plugin.entities.model.message import (
     SystemPromptMessage,
     UserPromptMessage,
 )
+from dify_plugin.entities.provider_config import LogMetadata
 from dify_plugin.entities.tool import (
-    LogMetadata,
     ToolInvokeMessage,
     ToolParameter,
     ToolProviderType,
@@ -402,6 +402,7 @@ class ReActAgentStrategy(AgentStrategy):
                 provider=tool_instance.identity.provider,
                 tool_name=tool_instance.identity.name,
                 parameters=tool_invoke_parameters,
+                credential_id=tool_instance.credential_id,
             )
             result = ""
             additional_messages = []  # Collect messages that need to be yielded
