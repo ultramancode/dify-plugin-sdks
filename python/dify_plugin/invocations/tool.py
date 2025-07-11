@@ -37,17 +37,23 @@ class ToolInvocation(BackwardsInvocation[ToolInvokeMessage]):
         provider: str,
         tool_name: str,
         parameters: dict[str, Any],
+        credential_id: str | None = None,
     ) -> Generator[ToolInvokeMessage, None, None]:
         """
         Invoke tool
         """
+        payload = {
+            "tool_type": provider_type.value,
+            "provider": provider,
+            "tool": tool_name,
+            "tool_parameters": parameters,
+        }
+
+        if credential_id is not None:
+            payload["credential_id"] = credential_id
+        
         return self._backwards_invoke(
             InvokeType.Tool,
             ToolInvokeMessage,
-            {
-                "tool_type": provider_type.value,
-                "provider": provider,
-                "tool": tool_name,
-                "tool_parameters": parameters,
-            },
+            payload,
         )
