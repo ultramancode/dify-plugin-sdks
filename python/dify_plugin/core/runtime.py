@@ -6,7 +6,7 @@ from enum import Enum
 from typing import Any, Generic, TypeVar, Union
 
 import httpx
-from pydantic import BaseModel, TypeAdapter
+from pydantic import BaseModel, Field, TypeAdapter
 from yarl import URL
 
 from dify_plugin.config.config import InstallMethod
@@ -28,7 +28,9 @@ from dify_plugin.core.server.tcp.request_reader import TCPReaderWriter
 class ModelInvocations:
     def __init__(self, session: "Session") -> None:
         from dify_plugin.invocations.model.llm import LLMInvocation, SummaryInvocation
-        from dify_plugin.invocations.model.llm_structured_output import LLMStructuredOutputInvocation
+        from dify_plugin.invocations.model.llm_structured_output import (
+            LLMStructuredOutputInvocation,
+        )
         from dify_plugin.invocations.model.moderation import ModerationInvocation
         from dify_plugin.invocations.model.rerank import RerankInvocation
         from dify_plugin.invocations.model.speech2text import Speech2TextInvocation
@@ -74,6 +76,17 @@ class WorkflowNodeInvocations:
         self.parameter_extractor = ParameterExtractorNodeInvocation(session)
 
 
+class InvokeCredentials(BaseModel):
+    tool_credentials: dict[str, str] = Field(
+        default_factory=dict,
+        description="This is a map of tool provider to credential id. It is used to store the credential id for the tool provider.",
+    )
+
+
+class SessionContext(BaseModel):
+    credentials: InvokeCredentials = Field(default_factory=InvokeCredentials)
+
+
 class Session:
     def __init__(
         self,
@@ -87,6 +100,7 @@ class Session:
         message_id: str | None = None,
         app_id: str | None = None,
         endpoint_id: str | None = None,
+        context: SessionContext | dict | None = None,
     ) -> None:
         # current session id
         self.session_id: str = session_id
@@ -112,6 +126,11 @@ class Session:
 
         # install method
         self.install_method: InstallMethod | None = install_method
+
+        # context
+        self.context: SessionContext = (
+            SessionContext.model_validate(context) if isinstance(context, dict) else context or SessionContext()
+        )
 
         # dify plugin daemon url
         self.dify_plugin_daemon_url: str | None = dify_plugin_daemon_url
@@ -140,6 +159,7 @@ class Session:
             writer=TCPReaderWriter(host="", port=0, key=""),
             install_method=None,
             dify_plugin_daemon_url=None,
+            context=None,
         )
 
 

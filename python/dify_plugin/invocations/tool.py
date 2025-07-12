@@ -50,8 +50,12 @@ class ToolInvocation(BackwardsInvocation[ToolInvokeMessage]):
         }
 
         if credential_id is not None:
+            # use credential id from parameters
             payload["credential_id"] = credential_id
-        
+        elif self.session and provider in self.session.context.credentials.tool_credentials:
+            # use credential id from session context
+            payload["credential_id"] = self.session.context.credentials.tool_credentials[provider]
+
         return self._backwards_invoke(
             InvokeType.Tool,
             ToolInvokeMessage,
