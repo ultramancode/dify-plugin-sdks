@@ -77,13 +77,30 @@ class WorkflowNodeInvocations:
 
 
 class InvokeCredentials(BaseModel):
+    """
+    Invoke credentials
+
+    Session Level Credentials, used to store session level credentials, such as tool call credentials.
+    Especially for the backwards invoke, when invoker is not specified, we need to use the credential id from the session context.
+    """
+
     tool_credentials: dict[str, str] = Field(
         default_factory=dict,
         description="This is a map of tool provider to credential id. It is used to store the credential id for the tool provider.",
     )
 
+    def get_credential_id(self, provider: str) -> str | None:
+        return self.tool_credentials.get(provider)
+
 
 class SessionContext(BaseModel):
+    """
+    Session Context
+
+    Session Context is used to store the session level context, such as credentials.
+    In the future, we will refactor message_id and conversation_id and the others to be part of the session context.
+    """
+
     credentials: InvokeCredentials = Field(default_factory=InvokeCredentials)
 
 
