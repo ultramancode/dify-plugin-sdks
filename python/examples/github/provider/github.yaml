@@ -45,11 +45,6 @@ oauth_schema:
       label:
         zh_Hans: "Client Secret"
         en_US: "Client Secret"
-    - name: "redirect_uri"
-      type: "text-input"
-      label:
-        zh_Hans: "Redirect URI"
-        en_US: "Redirect URI"
   credentials_schema:
     - name: "access_token"
       type: "secret-input"

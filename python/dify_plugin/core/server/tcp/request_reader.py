@@ -198,6 +198,7 @@ class TCPReaderWriter(RequestReader, ResponseWriter):
                         endpoint_id=data.get("endpoint_id"),
                         event=PluginInStreamEvent.value_of(data["event"]),
                         data=data["data"],
+                        context=data.get("context"),
                         reader=self,
                         writer=self,
                     )

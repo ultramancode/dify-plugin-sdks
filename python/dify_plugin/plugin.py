@@ -390,6 +390,7 @@ class Plugin(IOServer, Router):
         message_id: str | None = None,
         app_id: str | None = None,
         endpoint_id: str | None = None,
+        context: dict | None = None,
     ):
         """
         accept requests and execute
@@ -408,6 +409,7 @@ class Plugin(IOServer, Router):
             message_id=message_id,
             app_id=app_id,
             endpoint_id=endpoint_id,
+            context=context,
         )
         response = self.dispatch(session, data)
         if response:

@@ -18,6 +18,7 @@ from dify_plugin.entities.model.message import (
     ToolPromptMessage,
     UserPromptMessage,
 )
+from dify_plugin.entities.provider_config import CredentialType
 from dify_plugin.entities.tool import ToolDescription, ToolIdentity, ToolParameter, ToolProviderType
 from dify_plugin.interfaces.tool import ToolLike, ToolProvider
 
@@ -122,6 +123,8 @@ class ToolEntity(BaseModel):
     parameters: list[ToolParameter] = Field(default_factory=list)
     description: ToolDescription | None = None
     output_schema: dict | None = None
+    credential_id: str | None = None
+    credential_type: CredentialType | None = None
     has_runtime_parameters: bool = Field(default=False, description="Whether the tool has runtime parameters")
     # provider type
     provider_type: ToolProviderType = ToolProviderType.BUILT_IN
