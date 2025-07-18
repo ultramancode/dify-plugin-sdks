@@ -4,3 +4,7 @@ class ToolProviderCredentialValidationError(Exception):
 
 class DatasourceCredentialValidationError(Exception):
     pass
+
+
+class DatasourceOAuthError(Exception):
+    pass

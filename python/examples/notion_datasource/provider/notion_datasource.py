@@ -1,11 +1,13 @@
 import urllib
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 import requests
-from dify_plugin.entities.datasource import DatasourceOAuthCredentials
-from dify_plugin.errors.tool import ToolProviderCredentialValidationError
-from dify_plugin.interfaces.datasource import DatasourceProvider
 from werkzeug import Request
+
+from dify_plugin.entities.datasource import DatasourceOAuthCredentials
+from dify_plugin.errors.tool import DatasourceOAuthError, ToolProviderCredentialValidationError
+from dify_plugin.interfaces.datasource import DatasourceProvider
 
 
 class NotionDatasourceProvider(DatasourceProvider):
@@ -33,7 +35,7 @@ class NotionDatasourceProvider(DatasourceProvider):
         """
         code = request.args.get("code")
         if not code:
-            raise ValueError("No code provided")
+            raise DatasourceOAuthError("No code provided")
 
         data = {
             "code": code,
@@ -46,7 +48,7 @@ class NotionDatasourceProvider(DatasourceProvider):
         response_json = response.json()
         access_token = response_json.get("access_token")
         if not access_token:
-            raise ValueError(f"Error in Notion OAuth: {response_json}")
+            raise DatasourceOAuthError(f"Error in Notion OAuth: {response_json}")
 
         workspace_name = response_json.get("workspace_name")
         workspace_icon = response_json.get("workspace_icon")
@@ -80,7 +82,7 @@ class NotionDatasourceProvider(DatasourceProvider):
                     "Content-Type": "application/json",
                 }
                 # Make a request to the users endpoint to validate the token
-                response = requests.get("https://api.notion.com/v1/users/me", headers=headers)
+                response = requests.get("https://api.notion.com/v1/users/me", headers=headers, timeout=10)
                 if response.status_code == 401:
                     raise ToolProviderCredentialValidationError("Invalid Notion Integration Token.")
                 elif response.status_code != 200:
@@ -90,7 +92,9 @@ class NotionDatasourceProvider(DatasourceProvider):
                 else:
                     return True
             except requests.RequestException as e:
-                raise ToolProviderCredentialValidationError(f"Network error when connecting to Notion API: {str(e)}")
+                raise ToolProviderCredentialValidationError(
+                    f"Network error when connecting to Notion API: {e!s}"
+                ) from e
 
         except Exception as e:
-            raise ToolProviderCredentialValidationError(str(e))
+            raise ToolProviderCredentialValidationError(str(e)) from e
