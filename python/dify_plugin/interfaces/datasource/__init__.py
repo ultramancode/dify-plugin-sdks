@@ -3,6 +3,9 @@ from typing import Any
 
 from werkzeug import Request
 
+from dify_plugin.entities.datasource import DatasourceOAuthCredentials
+from dify_plugin.protocol.oauth import OAuthCredentials
+
 
 class DatasourceProvider:
     """
@@ -23,10 +26,17 @@ class DatasourceProvider:
 
     def oauth_get_credentials(
         self, redirect_uri: str, system_credentials: Mapping[str, Any], request: Request
-    ) -> Mapping[str, Any]:
-        return self._oauth_get_credentials(redirect_uri, system_credentials, request)
+    ) -> OAuthCredentials:
+        datasource_credentials = self._oauth_get_credentials(redirect_uri, system_credentials, request)
+        return OAuthCredentials(
+            metadata={
+                "avatar_url": datasource_credentials.avatar_url,
+                "name": datasource_credentials.name,
+            },
+            credentials=datasource_credentials.credentials,
+        )
 
     def _oauth_get_credentials(
         self, redirect_uri: str, system_credentials: Mapping[str, Any], request: Request
-    ) -> Mapping[str, Any]:
+    ) -> DatasourceOAuthCredentials:
         raise NotImplementedError("This method should be implemented by a subclass")

@@ -146,3 +146,13 @@ class OnlineDriveDownloadFileRequest(BaseModel):
 
     key: str = Field(..., description="The name of the file")
     bucket: str | None = Field(None, description="The name of the bucket")
+
+
+class DatasourceOAuthCredentials(BaseModel):
+    """
+    DatasourceOAuth credentials
+    """
+
+    name: str | None = Field(None, description="The name of the OAuth credential")
+    avatar_url: str | None = Field(None, description="The avatar url of the OAuth")
+    credentials: Mapping[str, Any] = Field(..., description="The credentials of the OAuth")

@@ -1,7 +1,13 @@
 from collections.abc import Mapping
 from typing import Any, Protocol
 
+from pydantic import BaseModel
 from werkzeug import Request
+
+
+class OAuthCredentials(BaseModel):
+    metadata: Mapping[str, Any] | None = None
+    credentials: Mapping[str, Any]
 
 
 class OAuthProviderProtocol(Protocol):
@@ -19,12 +25,12 @@ class OAuthProviderProtocol(Protocol):
         redirect_uri: str,
         system_credentials: Mapping[str, Any],
         request: Request,
-    ) -> Mapping[str, Any]:
+    ) -> OAuthCredentials:
         """
         Get the credentials
         :param redirect_uri: redirect uri
         :param request: request
         :param system_credentials: system credentials
-        :return: credentials
+        :return: { "metadata": { "avatar_url": str, "name": str }, "credentials": credentials }
         """
         ...

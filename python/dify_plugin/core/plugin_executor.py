@@ -358,8 +358,11 @@ class PluginExecutor:
         bytes_data = binascii.unhexlify(data.raw_http_request)
         request = parse_raw_request(bytes_data)
 
+        credentials = provider_instance.oauth_get_credentials(data.redirect_uri, data.system_credentials, request)
+
         return {
-            "credentials": provider_instance.oauth_get_credentials(data.redirect_uri, data.system_credentials, request),
+            "credentials": credentials.credentials,
+            "metadata": credentials.metadata or {},
         }
 
     def validate_datasource_credentials(self, session: Session, data: DatasourceValidateCredentialsRequest):
