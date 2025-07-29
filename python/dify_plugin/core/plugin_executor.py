@@ -377,7 +377,7 @@ class PluginExecutor:
             "credentials": credentials.credentials,
             "expires_at": credentials.expires_at,
         }
-    
+
     def validate_datasource_credentials(self, session: Session, data: DatasourceValidateCredentialsRequest):
         provider_instance_cls = self.registration.get_datasource_provider_cls(data.provider)
         if provider_instance_cls is None:
@@ -389,7 +389,7 @@ class PluginExecutor:
         return {
             "result": True,
         }
-    
+
     def _get_dynamic_parameter_action(
         self, session: Session, data: DynamicParameterFetchParameterOptionsRequest
     ) -> DynamicSelectProtocol | None:

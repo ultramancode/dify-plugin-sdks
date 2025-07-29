@@ -1,15 +1,9 @@
 from collections.abc import Mapping
 from typing import Any, Protocol
 
-from pydantic import BaseModel
 from werkzeug import Request
 
 from dify_plugin.entities.oauth import OAuthCredentials
-
-
-class OAuthCredentials(BaseModel):
-    metadata: Mapping[str, Any] | None = None
-    credentials: Mapping[str, Any]
 
 
 class OAuthProviderProtocol(Protocol):
