@@ -1,6 +1,6 @@
 from collections.abc import Mapping
 from enum import Enum, StrEnum
-from typing import Any, Optional, Union
+from typing import Any, Union
 
 from pydantic import (
     BaseModel,
@@ -20,6 +20,15 @@ from dify_plugin.entities.provider_config import (
     CredentialType,
     ProviderConfig,
 )
+from dify_plugin.entities.provider_config import (
+    LogMetadata as CommonLogMetadata,
+)
+
+# TODO: this is a temporary solution to avoid breaking changes from agent imports
+# ImportError: cannot import name "LogMetadata" from "dify_plugin.entities.tool"
+# which will be removed in 0.5.0
+# ISSUE: https://github.com/langgenius/dify-plugin-sdks/issues/181
+LogMetadata = CommonLogMetadata
 
 
 class ToolRuntime(BaseModel):
@@ -106,7 +115,7 @@ class ToolParameter(BaseModel):
     min: Union[float, int] | None = None
     max: Union[float, int] | None = None
     precision: int | None = None
-    options: list[ParameterOption] | None = None
+    options: list[ToolParameterOption] | None = None
     # MCP object and array type parameters use this field to store the schema
     input_schema: Mapping[str, Any] | None = None
 
@@ -173,7 +182,7 @@ class ToolProviderIdentity(BaseModel):
     name: str = Field(..., description="The name of the tool")
     description: I18nObject = Field(..., description="The description of the tool")
     icon: str = Field(..., description="The icon of the tool")
-    icon_dark: Optional[str] = Field(None, description="The dark mode icon of the tool")
+    icon_dark: str | None = Field(None, description="The dark mode icon of the tool")
     label: I18nObject = Field(..., description="The label of the tool")
     tags: list[ToolLabelEnum] = Field(
         default=[],
@@ -286,7 +295,7 @@ class ToolSelector(BaseModel):
         required: bool = Field(..., description="Whether the parameter is required")
         description: str = Field(..., description="The description of the parameter")
         default: Union[int, float, str] | None = None
-        options: list[ParameterOption] | None = None
+        options: list[ToolParameterOption] | None = None
 
     provider_id: str = Field(..., description="The id of the provider")
     tool_name: str = Field(..., description="The name of the tool")

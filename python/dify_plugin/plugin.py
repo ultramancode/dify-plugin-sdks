@@ -351,6 +351,12 @@ class Plugin(IOServer, Router):
         )
 
         self.register_route(
+            self.plugin_executer.refresh_oauth_credentials,
+            lambda data: data.get("type") == PluginInvokeType.OAuth.value
+                         and data.get("action") == OAuthActions.RefreshCredentials.value,
+        )
+        
+        self.register_route(
             self.plugin_executer.datasource_online_drive_browse_files,
             lambda data: data.get("type") == PluginInvokeType.Datasource.value
             and data.get("action") == DatasourceActions.InvokeOnlineDriveBrowseFiles.value,
@@ -366,18 +372,6 @@ class Plugin(IOServer, Router):
             self.plugin_executer.fetch_parameter_options,
             lambda data: data.get("type") == PluginInvokeType.DynamicParameter.value
             and data.get("action") == DynamicParameterActions.FetchParameterOptions.value,
-        )
-
-        self.register_route(
-            self.plugin_executer.get_oauth_authorization_url,
-            lambda data: data.get("type") == PluginInvokeType.OAuth.value
-            and data.get("action") == OAuthActions.GetAuthorizationUrl.value,
-        )
-
-        self.register_route(
-            self.plugin_executer.get_oauth_credentials,
-            lambda data: data.get("type") == PluginInvokeType.OAuth.value
-            and data.get("action") == OAuthActions.GetCredentials.value,
         )
 
     def _execute_request(

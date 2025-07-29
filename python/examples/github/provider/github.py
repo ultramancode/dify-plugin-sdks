@@ -7,7 +7,8 @@ import requests
 from werkzeug import Request
 
 from dify_plugin import ToolProvider
-from dify_plugin.errors.tool import ToolProviderCredentialValidationError
+from dify_plugin.entities.oauth import ToolOAuthCredentials
+from dify_plugin.errors.tool import ToolProviderCredentialValidationError, ToolProviderOAuthError
 
 
 class GithubProvider(ToolProvider):
@@ -31,13 +32,13 @@ class GithubProvider(ToolProvider):
 
     def _oauth_get_credentials(
         self, redirect_uri: str, system_credentials: Mapping[str, Any], request: Request
-    ) -> Mapping[str, Any]:
+    ) -> ToolOAuthCredentials:
         """
         Exchange code for access_token.
         """
         code = request.args.get("code")
         if not code:
-            raise ValueError("No code provided")
+            raise ToolProviderOAuthError("No code provided")
         # Optionally: validate state here
 
         data = {
@@ -49,10 +50,20 @@ class GithubProvider(ToolProvider):
         headers = {"Accept": "application/json"}
         response = requests.post(self._TOKEN_URL, data=data, headers=headers, timeout=10)
         response_json = response.json()
-        access_token = response_json.get("access_token")
-        if not access_token:
-            raise ValueError(f"Error in GitHub OAuth: {response_json}")
-        return {"access_token": access_token}
+        access_tokens = response_json.get("access_token")
+        if not access_tokens:
+            raise ToolProviderOAuthError(f"Error in GitHub OAuth: {response_json}")
+
+        return ToolOAuthCredentials(credentials={"access_tokens": access_tokens}, expires_at=-1)
+
+    def _oauth_refresh_credentials(
+        self, redirect_uri: str, system_credentials: Mapping[str, Any], credentials: Mapping[str, Any]
+    ) -> ToolOAuthCredentials:
+        """
+        Refresh the credentials
+        """
+        # TODO: Implement the refresh credentials logic
+        return ToolOAuthCredentials(credentials=credentials, expires_at=-1)
 
     def _validate_credentials(self, credentials: dict) -> None:
         try:

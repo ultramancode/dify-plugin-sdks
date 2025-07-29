@@ -64,6 +64,7 @@ class EndpointActions(StrEnum):
 class OAuthActions(StrEnum):
     GetAuthorizationUrl = "get_authorization_url"
     GetCredentials = "get_credentials"
+    RefreshCredentials = "refresh_credentials"
 
 
 class DatasourceActions(StrEnum):
@@ -273,6 +274,15 @@ class OAuthGetCredentialsRequest(PluginAccessRequest):
     redirect_uri: str
     system_credentials: Mapping[str, Any]
     raw_http_request: str
+
+
+class OAuthRefreshCredentialsRequest(PluginAccessRequest):
+    type: PluginInvokeType = PluginInvokeType.OAuth
+    action: OAuthActions = OAuthActions.RefreshCredentials
+    provider: str
+    redirect_uri: str
+    system_credentials: Mapping[str, Any]
+    credentials: Mapping[str, Any]
 
 
 class DynamicParameterFetchParameterOptionsRequest(BaseModel):

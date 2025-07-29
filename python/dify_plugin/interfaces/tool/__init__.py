@@ -8,13 +8,9 @@ from werkzeug import Request
 from dify_plugin.core.runtime import Session
 from dify_plugin.entities import ParameterOption
 from dify_plugin.entities.invoke_message import InvokeMessage
+from dify_plugin.entities.oauth import ToolOAuthCredentials
 from dify_plugin.entities.provider_config import LogMetadata
-from dify_plugin.entities.tool import (
-    ToolInvokeMessage,
-    ToolParameter,
-    ToolRuntime,
-    ToolSelector,
-)
+from dify_plugin.entities.tool import ToolInvokeMessage, ToolParameter, ToolRuntime, ToolSelector
 from dify_plugin.file.constants import DIFY_FILE_IDENTITY, DIFY_TOOL_SELECTOR_IDENTITY
 from dify_plugin.file.entities import FileType
 from dify_plugin.file.file import File
@@ -240,26 +236,70 @@ class ToolProvider:
 
     def _validate_credentials(self, credentials: dict):
         raise NotImplementedError(
-            "This plugin should implement `_validate_credentials` method to enable credentials validation"
+            "The tool you are using does not support credentials validation, "
+            "please implement `_validate_credentials` method"
         )
 
     def oauth_get_authorization_url(self, redirect_uri: str, system_credentials: Mapping[str, Any]) -> str:
+        """
+        Get the authorization url
+
+        :param redirect_uri: redirect uri
+        :param system_credentials: system credentials
+        :return: authorization url
+        """
         return self._oauth_get_authorization_url(redirect_uri, system_credentials)
 
     def _oauth_get_authorization_url(self, redirect_uri: str, system_credentials: Mapping[str, Any]) -> str:
-        raise NotImplementedError("This method should be implemented by a subclass")
+        raise NotImplementedError(
+            "The tool you are using does not support OAuth, please implement `_oauth_get_authorization_url` method"
+        )
 
     def oauth_get_credentials(
         self, redirect_uri: str, system_credentials: Mapping[str, Any], request: Request
     ) -> OAuthCredentials:
+        """
+        Get the credentials
+
+        :param redirect_uri: redirect uri
+        :param system_credentials: system credentials
+        :param request: raw http request
+        :return: credentials
+        """
+        tool_oauth_credentials = self._oauth_get_credentials(redirect_uri, system_credentials, request)
         return OAuthCredentials(
-            credentials=self._oauth_get_credentials(redirect_uri, system_credentials, request),
+            credentials=tool_oauth_credentials.credentials, expires_at=tool_oauth_credentials.expires_at
         )
 
     def _oauth_get_credentials(
         self, redirect_uri: str, system_credentials: Mapping[str, Any], request: Request
-    ) -> Mapping[str, Any]:
-        raise NotImplementedError("This method should be implemented by a subclass")
+    ) -> ToolOAuthCredentials:
+        raise NotImplementedError(
+            "The tool you are using does not support OAuth, please implement `_oauth_get_credentials` method"
+        )
+
+    def oauth_refresh_credentials(
+        self, redirect_uri: str, system_credentials: Mapping[str, Any], credentials: Mapping[str, Any]
+    ) -> OAuthCredentials:
+        """
+        Refresh the credentials
+
+        :param redirect_uri: redirect uri
+        :param system_credentials: system credentials
+        :param credentials: credentials
+        :return: refreshed credentials
+        """
+        tool_oauth_credentials = self._oauth_refresh_credentials(redirect_uri, system_credentials, credentials)
+        return OAuthCredentials(
+            credentials=tool_oauth_credentials.credentials, expires_at=tool_oauth_credentials.expires_at
+        )
+
+    def _oauth_refresh_credentials(
+        self, redirect_uri: str, system_credentials: Mapping[str, Any], credentials: Mapping[str, Any]
+    ) -> ToolOAuthCredentials:
+        raise NotImplementedError(
+            "The tool you are using does not support OAuth, please implement `_oauth_refresh_credentials` method"
+        )
 
 
 class Tool(ToolLike[ToolInvokeMessage]):

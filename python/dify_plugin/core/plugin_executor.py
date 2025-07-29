@@ -29,6 +29,7 @@ from dify_plugin.core.entities.plugin.request import (
     ModelValidateProviderCredentialsRequest,
     OAuthGetAuthorizationUrlRequest,
     OAuthGetCredentialsRequest,
+    OAuthRefreshCredentialsRequest,
     ToolGetRuntimeParametersRequest,
     ToolInvokeRequest,
     ToolValidateCredentialsRequest,
@@ -361,10 +362,22 @@ class PluginExecutor:
         credentials = provider_instance.oauth_get_credentials(data.redirect_uri, data.system_credentials, request)
 
         return {
-            "credentials": credentials.credentials,
             "metadata": credentials.metadata or {},
+            "credentials": credentials.credentials,
+            "expires_at": credentials.expires_at,
         }
 
+    def refresh_oauth_credentials(self, session: Session, data: OAuthRefreshCredentialsRequest):
+        provider_instance = self._get_oauth_provider_instance(data.provider)
+        credentials = provider_instance.oauth_refresh_credentials(
+            data.redirect_uri, data.system_credentials, data.credentials
+        )
+
+        return {
+            "credentials": credentials.credentials,
+            "expires_at": credentials.expires_at,
+        }
+    
     def validate_datasource_credentials(self, session: Session, data: DatasourceValidateCredentialsRequest):
         provider_instance_cls = self.registration.get_datasource_provider_cls(data.provider)
         if provider_instance_cls is None:
@@ -376,7 +389,7 @@ class PluginExecutor:
         return {
             "result": True,
         }
-
+    
     def _get_dynamic_parameter_action(
         self, session: Session, data: DynamicParameterFetchParameterOptionsRequest
     ) -> DynamicSelectProtocol | None:

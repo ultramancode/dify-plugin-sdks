@@ -4,6 +4,8 @@ from typing import Any, Protocol
 from pydantic import BaseModel
 from werkzeug import Request
 
+from dify_plugin.entities.oauth import OAuthCredentials
+
 
 class OAuthCredentials(BaseModel):
     metadata: Mapping[str, Any] | None = None
@@ -32,5 +34,20 @@ class OAuthProviderProtocol(Protocol):
         :param request: request
         :param system_credentials: system credentials
         :return: { "metadata": { "avatar_url": str, "name": str }, "credentials": credentials }
+        """
+        ...
+
+    def oauth_refresh_credentials(
+        self,
+        redirect_uri: str,
+        system_credentials: Mapping[str, Any],
+        credentials: Mapping[str, Any],
+    ) -> OAuthCredentials:
+        """
+        Refresh the credentials
+        :param redirect_uri: redirect uri
+        :param system_credentials: system credentials
+        :param credentials: credentials
+        :return: credentials
         """
         ...
