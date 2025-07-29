@@ -156,3 +156,8 @@ class DatasourceOAuthCredentials(BaseModel):
     name: str | None = Field(None, description="The name of the OAuth credential")
     avatar_url: str | None = Field(None, description="The avatar url of the OAuth")
     credentials: Mapping[str, Any] = Field(..., description="The credentials of the OAuth")
+    expires_at: int | None = Field(
+        default=-1,
+        description="""The expiration timestamp (in seconds since Unix epoch, UTC) of the credentials.
+        Set to -1 or None if the credentials do not expire.""",
+    )

@@ -34,9 +34,38 @@ class DatasourceProvider:
                 "name": datasource_credentials.name,
             },
             credentials=datasource_credentials.credentials,
+            expires_at=datasource_credentials.expires_at,
         )
 
     def _oauth_get_credentials(
         self, redirect_uri: str, system_credentials: Mapping[str, Any], request: Request
     ) -> DatasourceOAuthCredentials:
         raise NotImplementedError("This method should be implemented by a subclass")
+
+    def oauth_refresh_credentials(
+        self, redirect_uri: str, system_credentials: Mapping[str, Any], credentials: Mapping[str, Any]
+    ) -> OAuthCredentials:
+        """
+        Refresh the credentials
+
+        :param redirect_uri: redirect uri
+        :param system_credentials: system credentials
+        :param credentials: credentials
+        :return: refreshed credentials
+        """
+        datasource_credentials = self._oauth_refresh_credentials(redirect_uri, system_credentials, credentials)
+        return OAuthCredentials(
+            metadata={
+                "avatar_url": datasource_credentials.avatar_url,
+                "name": datasource_credentials.name,
+            },
+            credentials=datasource_credentials.credentials,
+            expires_at=datasource_credentials.expires_at,
+        )
+
+    def _oauth_refresh_credentials(
+        self, redirect_uri: str, system_credentials: Mapping[str, Any], credentials: Mapping[str, Any]
+    ) -> DatasourceOAuthCredentials:
+        raise NotImplementedError(
+            "The tool you are using does not support OAuth, please implement `_oauth_refresh_credentials` method"
+        )
