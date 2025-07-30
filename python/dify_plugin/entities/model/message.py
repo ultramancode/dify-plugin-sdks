@@ -223,6 +223,7 @@ class AssistantPromptMessage(PromptMessage):
 
     role: PromptMessageRole = PromptMessageRole.ASSISTANT
     tool_calls: list[ToolCall] = []
+    reasoning_content: Optional[str] = None
 
     def is_empty(self) -> bool:
         """

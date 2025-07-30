@@ -522,10 +522,10 @@ class OAICompatLargeLanguageModel(_CommonOaiApiCompat, LargeLanguageModel):
         """
         chunk_index = 0
         full_assistant_content = ""
+        full_reasoning_content = ""
         tools_calls: list[AssistantPromptMessage.ToolCall] = []
         finish_reason = None
         usage = None
-        is_reasoning_started = False
         # delimiter for stream response, need unicode_escape
         delimiter = credentials.get("stream_mode_delimiter", "\n\n")
         delimiter = codecs.decode(delimiter, "unicode_escape")
@@ -570,9 +570,10 @@ class OAICompatLargeLanguageModel(_CommonOaiApiCompat, LargeLanguageModel):
 
                 if "delta" in choice:
                     delta = choice["delta"]
-                    delta_content, is_reasoning_started = self._wrap_thinking_by_reasoning_content(
-                        delta, is_reasoning_started
-                    )
+                    
+                    # Simple field separation approach - let backend handle reasoning_format
+                    delta_content = delta.get("content", "")
+                    reasoning_content_for_message = delta.get("reasoning_content")
 
                     assistant_message_tool_calls = None
 
@@ -591,15 +592,19 @@ class OAICompatLargeLanguageModel(_CommonOaiApiCompat, LargeLanguageModel):
                         tool_calls = self._extract_response_tool_calls(assistant_message_tool_calls)
                         _increase_tool_call(tool_calls, tools_calls)
 
-                    if delta_content is None or delta_content == "":
+                    # Skip if both content and reasoning_content are empty
+                    if not delta_content and not reasoning_content_for_message:
                         continue
 
-                    # transform assistant message to prompt message
+                    # Create assistant message (compatible with both approaches)
                     assistant_prompt_message = AssistantPromptMessage(
                         content=delta_content,
+                        reasoning_content=reasoning_content_for_message
                     )
 
-                    full_assistant_content += delta_content
+                    full_assistant_content += delta_content if delta_content else ""
+                    full_reasoning_content += reasoning_content_for_message if reasoning_content_for_message else ""
+
                 elif "text" in choice:
                     choice_text = choice.get("text", "")
                     if choice_text == "":
@@ -630,6 +635,11 @@ class OAICompatLargeLanguageModel(_CommonOaiApiCompat, LargeLanguageModel):
                 ),
             )
 
+        # For token calculation, include reasoning content if present
+        full_content_for_tokens = full_assistant_content
+        if full_reasoning_content:
+            full_content_for_tokens = f"<think>{full_reasoning_content}</think>{full_assistant_content}"
+            
         yield self._create_final_llm_result_chunk(
             index=chunk_index,
             message=AssistantPromptMessage(content=""),
@@ -638,7 +648,7 @@ class OAICompatLargeLanguageModel(_CommonOaiApiCompat, LargeLanguageModel):
             model=model,
             credentials=credentials,
             prompt_messages=prompt_messages,
-            full_content=full_assistant_content,
+            full_content=full_content_for_tokens,
         )
 
     def _handle_generate_response(
