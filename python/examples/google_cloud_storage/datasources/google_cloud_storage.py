@@ -1,17 +1,18 @@
 import json
-from collections.abc import Generator
-from typing import Any, Mapping
+from collections.abc import Generator, Mapping
+from typing import Any
+
+from google.cloud import storage
 
 from dify_plugin.entities.datasource import (
     DatasourceMessage,
     OnlineDriveBrowseFilesRequest,
-    OnlineDriveFileBucket,
+    OnlineDriveBrowseFilesResponse,
     OnlineDriveDownloadFileRequest,
     OnlineDriveFile,
-    OnlineDriveBrowseFilesResponse,
+    OnlineDriveFileBucket,
 )
 from dify_plugin.interfaces.datasource.online_drive import OnlineDriveDatasource
-from google.cloud import storage
 
 
 class GoogleCloudStorageDataSource(OnlineDriveDatasource):

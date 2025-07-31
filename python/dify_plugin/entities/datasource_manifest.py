@@ -1,5 +1,5 @@
 from enum import Enum, StrEnum
-from typing import Any, Dict, Union
+from typing import Any, Union
 
 from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
@@ -169,7 +169,7 @@ class DatasourceEntity(BaseModel):
     identity: DatasourceIdentity
     parameters: list[DatasourceParameter] = Field(default_factory=list)
     description: I18nObject = Field(..., description="The label of the datasource")
-    output_schema: Dict[str, Any] = Field(default_factory=dict, description="Output schema definition")
+    output_schema: dict[str, Any] = Field(default_factory=dict, description="Output schema definition")
     extra: DatasourceEntityExtra
 
     @field_validator("parameters", mode="before")
@@ -250,7 +250,7 @@ class DatasourceProviderManifest(BaseModel):
         return datasources
 
 
-def _resolve_schema_refs(schema: Dict[str, Any], definitions: Dict[str, Any]) -> Dict[str, Any]:
+def _resolve_schema_refs(schema: dict[str, Any], definitions: dict[str, Any]) -> dict[str, Any]:
     """
     Recursively resolve $ref references in a JSON schema
 
