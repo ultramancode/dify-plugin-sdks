@@ -1,5 +1,5 @@
 from enum import Enum, StrEnum
-from typing import Union
+from typing import Any, Dict, Union
 
 from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
@@ -13,6 +13,60 @@ from dify_plugin.entities import (
 )
 from dify_plugin.entities.oauth import OAuthSchema
 from dify_plugin.entities.provider_config import CommonParameterType, ProviderConfig
+
+BUILTIN_DEFINITIONS = {
+    "file": {
+        "type": "object",
+        "properties": {
+            "name": {"type": "string", "description": "file name"},
+            "size": {"type": "number", "description": "file size"},
+            "type": {"type": "string", "description": "file type"},
+            "extension": {"type": "string", "description": "file extension"},
+            "mime_type": {"type": "string", "description": "file mime type"},
+            "transfer_method": {"type": "string", "description": "file transfer method"},
+            "url": {"type": "string", "description": "file url"},
+            "related_id": {"type": "string", "description": "file related id"},
+        },
+        "required": ["name"],
+    },
+    "website_crawl": {
+        "type": "object",
+        "properties": {
+            "source_url": {"type": "string", "description": "The URL of the crawled website"},
+            "content": {"type": "string", "description": "The content of the crawled website"},
+            "title": {"type": "string", "description": "The title of the crawled website"},
+            "description": {"type": "string", "description": "The description of the crawled website"},
+        },
+        "required": ["source_url", "content"],
+    },
+    "online_document": {
+        "type": "object",
+        "properties": {
+            "workspace_id": {"type": "string", "description": "The ID of the workspace where the document is stored"},
+            "page_id": {"type": "string", "description": "The ID of the page in the document"},
+            "content": {"type": "string", "description": "The content of the online document"},
+        },
+        "required": ["content"],
+    },
+    "pagination": {
+        "type": "object",
+        "properties": {
+            "page": {"type": "integer", "description": "Current page number"},
+            "per_page": {"type": "integer", "description": "Items per page"},
+            "total": {"type": "integer", "description": "Total number of items"},
+            "has_more": {"type": "boolean", "description": "Whether there are more items"},
+        },
+    },
+    "error": {
+        "type": "object",
+        "properties": {
+            "code": {"type": "string", "description": "Error code"},
+            "message": {"type": "string", "description": "Error message"},
+            "details": {"type": "object", "description": "Additional error details"},
+        },
+        "required": ["code", "message"],
+    },
+}
 
 
 @docs(
@@ -115,6 +169,7 @@ class DatasourceEntity(BaseModel):
     identity: DatasourceIdentity
     parameters: list[DatasourceParameter] = Field(default_factory=list)
     description: I18nObject = Field(..., description="The label of the datasource")
+    output_schema: Dict[str, Any] = Field(default_factory=dict, description="Output schema definition")
     extra: DatasourceEntityExtra
 
     @field_validator("parameters", mode="before")
@@ -186,8 +241,48 @@ class DatasourceProviderManifest(BaseModel):
                 raise ValueError("datasource path should be a string")
             try:
                 file = load_yaml_file(datasource)
+                if "output_schema" in file:
+                    file["output_schema"] = _resolve_schema_refs(file["output_schema"], BUILTIN_DEFINITIONS)
                 datasources.append(DatasourceEntity(**file))
             except Exception as e:
                 raise ValueError(f"Error loading datasource configuration: {e!s}") from e
 
         return datasources
+
+
+def _resolve_schema_refs(schema: Dict[str, Any], definitions: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Recursively resolve $ref references in a JSON schema
+
+    Args:
+        schema: The schema object that may contain $ref references
+        definitions: Available type definitions to resolve references against
+
+    Returns:
+        Schema with all $ref references resolved
+    """
+    if isinstance(schema, dict):
+        if "$ref" in schema:
+            # Resolve the reference
+            ref = schema["$ref"]
+            if ref.startswith("#/$defs/"):
+                type_name = ref.replace("#/$defs/", "")
+                if type_name in definitions:
+                    # Return the resolved definition (recursively resolve it too)
+                    return _resolve_schema_refs(definitions[type_name], definitions)
+                else:
+                    raise ValueError(f"Reference '{ref}' not found in definitions")
+            else:
+                raise ValueError(f"Unsupported reference format: {ref}")
+        else:
+            # Recursively resolve references in nested objects
+            resolved = {}
+            for key, value in schema.items():
+                resolved[key] = _resolve_schema_refs(value, definitions)
+            return resolved
+    elif isinstance(schema, list):
+        # Recursively resolve references in arrays
+        return [_resolve_schema_refs(item, definitions) for item in schema]
+    else:
+        # Return primitive values as-is
+        return schema

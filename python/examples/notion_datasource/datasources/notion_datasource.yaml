@@ -19,7 +19,7 @@ output_schema:
   type: object
   properties:
     result:
-      $ref: "#/definitions/online_document"
+      $ref: "#/$defs/online_document"
 extra:
   python:
     source: datasources/notion_datasource.py
