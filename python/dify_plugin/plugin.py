@@ -353,7 +353,7 @@ class Plugin(IOServer, Router):
         self.register_route(
             self.plugin_executer.refresh_oauth_credentials,
             lambda data: data.get("type") == PluginInvokeType.OAuth.value
-                         and data.get("action") == OAuthActions.RefreshCredentials.value,
+            and data.get("action") == OAuthActions.RefreshCredentials.value,
         )
 
         self.register_route(
