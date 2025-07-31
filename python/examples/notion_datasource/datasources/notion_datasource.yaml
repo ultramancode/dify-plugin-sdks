@@ -16,20 +16,10 @@ description:
 parameters:
 
 output_schema:
-    type: object
-    properties:
-      result:
-        type: object
-        properties:
-          workspace_id:
-            type: string
-            description: workspace id
-          page_id:
-            type: string
-            description: page id
-          content:
-            type: string
-            description: page content
+  type: object
+  properties:
+    result:
+      $ref: "#/definitions/online_document"
 extra:
   python:
     source: datasources/notion_datasource.py
