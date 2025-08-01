@@ -18,9 +18,14 @@ BUILTIN_DEFINITIONS = {
     "file": {
         "type": "object",
         "properties": {
+            "dify_builtin_type": {
+                "type": "string",
+                "enum": ["File"],
+                "description": "Business type identifier for frontend",
+            },
             "name": {"type": "string", "description": "file name"},
             "size": {"type": "number", "description": "file size"},
-            "type": {"type": "string", "description": "file type"},
+            "file_type": {"type": "string", "description": "file type"},
             "extension": {"type": "string", "description": "file extension"},
             "mime_type": {"type": "string", "description": "file mime type"},
             "transfer_method": {"type": "string", "description": "file transfer method"},
@@ -32,6 +37,11 @@ BUILTIN_DEFINITIONS = {
     "website_crawl": {
         "type": "object",
         "properties": {
+            "dify_builtin_type": {
+                "type": "string",
+                "enum": ["WebsiteCrawl"],
+                "description": "Business type identifier for frontend",
+            },
             "source_url": {"type": "string", "description": "The URL of the crawled website"},
             "content": {"type": "string", "description": "The content of the crawled website"},
             "title": {"type": "string", "description": "The title of the crawled website"},
@@ -42,6 +52,11 @@ BUILTIN_DEFINITIONS = {
     "online_document": {
         "type": "object",
         "properties": {
+            "dify_builtin_type": {
+                "type": "string",
+                "enum": ["OnlineDocument"],
+                "description": "Business type identifier for frontend",
+            },
             "workspace_id": {"type": "string", "description": "The ID of the workspace where the document is stored"},
             "page_id": {"type": "string", "description": "The ID of the page in the document"},
             "content": {"type": "string", "description": "The content of the online document"},
@@ -51,15 +66,26 @@ BUILTIN_DEFINITIONS = {
     "pagination": {
         "type": "object",
         "properties": {
+            "dify_builtin_type": {
+                "type": "string",
+                "enum": ["Pagination"],
+                "description": "Business type identifier for frontend",
+            },
             "page": {"type": "integer", "description": "Current page number"},
             "per_page": {"type": "integer", "description": "Items per page"},
             "total": {"type": "integer", "description": "Total number of items"},
             "has_more": {"type": "boolean", "description": "Whether there are more items"},
         },
+        "required": ["dify_builtin_type"],
     },
     "error": {
         "type": "object",
         "properties": {
+            "dify_builtin_type": {
+                "type": "string",
+                "enum": ["Error"],
+                "description": "Business type identifier for frontend",
+            },
             "code": {"type": "string", "description": "Error code"},
             "message": {"type": "string", "description": "Error message"},
             "details": {"type": "object", "description": "Additional error details"},
