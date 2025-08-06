@@ -63,34 +63,72 @@ BUILTIN_DEFINITIONS = {
         },
         "required": ["content"],
     },
-    "pagination": {
+    "general_structure_chunk": {
         "type": "object",
         "properties": {
             "dify_builtin_type": {
                 "type": "string",
-                "enum": ["Pagination"],
+                "enum": ["GeneralStructureChunk"],
                 "description": "Business type identifier for frontend",
             },
-            "page": {"type": "integer", "description": "Current page number"},
-            "per_page": {"type": "integer", "description": "Items per page"},
-            "total": {"type": "integer", "description": "Total number of items"},
-            "has_more": {"type": "boolean", "description": "Whether there are more items"},
+            "general_chunks": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "List of general content chunks",
+            },
         },
-        "required": ["dify_builtin_type"],
+        "required": ["general_chunks"],
     },
-    "error": {
+    "parent_child_structure_chunk": {
         "type": "object",
         "properties": {
             "dify_builtin_type": {
                 "type": "string",
-                "enum": ["Error"],
+                "enum": ["ParentChildStructureChunk"],
                 "description": "Business type identifier for frontend",
             },
-            "code": {"type": "string", "description": "Error code"},
-            "message": {"type": "string", "description": "Error message"},
-            "details": {"type": "object", "description": "Additional error details"},
+            "parent_mode": {"type": "string", "description": "The mode of parent-child relationship"},
+            "parent_child_chunks": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "parent_content": {"type": "string", "description": "The parent content"},
+                        "child_contents": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "List of child contents",
+                        },
+                    },
+                    "required": ["parent_content", "child_contents"],
+                },
+                "description": "List of parent-child chunk pairs",
+            },
         },
-        "required": ["code", "message"],
+        "required": ["parent_mode", "parent_child_chunks"],
+    },
+    "qa_structure_chunk": {
+        "type": "object",
+        "properties": {
+            "dify_builtin_type": {
+                "type": "string",
+                "enum": ["QAStructureChunk"],
+                "description": "Business type identifier for frontend",
+            },
+            "qa_chunks": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "question": {"type": "string", "description": "The question"},
+                        "answer": {"type": "string", "description": "The answer"},
+                    },
+                    "required": ["question", "answer"],
+                },
+                "description": "List of question-answer pairs",
+            },
+        },
+        "required": ["qa_chunks"],
     },
 }
 
@@ -262,13 +300,17 @@ class DatasourceProviderManifest(BaseModel):
         datasources: list[DatasourceEntity] = []
 
         for datasource in value:
-            # read from yaml
             if not isinstance(datasource, str):
                 raise ValueError("datasource path should be a string")
             try:
                 file = load_yaml_file(datasource)
                 if "output_schema" in file:
-                    file["output_schema"] = _resolve_schema_refs(file["output_schema"], BUILTIN_DEFINITIONS)
+                    user_definitions = file.get("definitions", {})
+                    all_definitions = {**BUILTIN_DEFINITIONS, **user_definitions}
+
+                    file["output_schema"] = _resolve_schema_refs(file["output_schema"], all_definitions)
+                    file.pop("definitions", None)
+
                 datasources.append(DatasourceEntity(**file))
             except Exception as e:
                 raise ValueError(f"Error loading datasource configuration: {e!s}") from e
