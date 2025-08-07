@@ -15,7 +15,16 @@ output_schema:
   properties:
     result:
       $ref: "#/$defs/file"
-
+    result2:
+      $ref: "#/$defs/website_crawl"
+    result3:
+      $ref: "#/$defs/online_document"
+    result4:
+      $ref: "#/$defs/general_structure_chunk"
+    result5:
+      $ref: "#/$defs/parent_child_structure_chunk"
+    result6:
+      $ref: "#/$defs/qa_structure_chunk"
 extra:
   python:
     source: datasources/google_cloud_storage.py

@@ -1,4 +1,4 @@
-version: 0.0.3
+version: 1.0.2
 type: plugin
 author: langgenius
 name: google_cloud_storage
@@ -16,7 +16,7 @@ plugins:
   datasources:
     - provider/google_cloud_storage.yaml
 meta:
-  version: 0.0.3
+  version: 0.0.1
   arch:
     - amd64
     - arm64
