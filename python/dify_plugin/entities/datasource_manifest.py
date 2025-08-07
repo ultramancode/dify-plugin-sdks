@@ -4,8 +4,8 @@ from typing import Any, Union
 from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
 from dify_plugin.core.documentation.schema_doc import docs
-from dify_plugin.core.utils.yaml_loader import load_yaml_file
 from dify_plugin.core.utils.schema_resolver import resolve_output_schema
+from dify_plugin.core.utils.yaml_loader import load_yaml_file
 from dify_plugin.entities import (
     I18nObject,
     ParameterAutoGenerate,
@@ -14,7 +14,6 @@ from dify_plugin.entities import (
 )
 from dify_plugin.entities.oauth import OAuthSchema
 from dify_plugin.entities.provider_config import CommonParameterType, ProviderConfig
-
 
 
 @docs(
@@ -198,5 +197,3 @@ class DatasourceProviderManifest(BaseModel):
                 raise ValueError(f"Error loading datasource configuration: {e!s}") from e
 
         return datasources
-
-

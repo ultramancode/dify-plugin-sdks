@@ -5,12 +5,12 @@ class BuiltinDefinitions:
     """
     Builtin schema definitions for datasource and tool manifests
     """
-    
+
     @classmethod
     def get_definitions(cls) -> dict[str, Any]:
         """
         Get all builtin schema definitions
-        
+
         Returns:
             Dictionary containing all builtin schema definitions
         """
@@ -57,7 +57,10 @@ class BuiltinDefinitions:
                         "enum": ["OnlineDocument"],
                         "description": "Business type identifier for frontend",
                     },
-                    "workspace_id": {"type": "string", "description": "The ID of the workspace where the document is stored"},
+                    "workspace_id": {
+                        "type": "string",
+                        "description": "The ID of the workspace where the document is stored",
+                    },
                     "page_id": {"type": "string", "description": "The ID of the page in the document"},
                     "content": {"type": "string", "description": "The content of the online document"},
                 },

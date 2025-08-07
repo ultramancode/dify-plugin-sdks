@@ -6,7 +6,7 @@ from dify_plugin.core.utils.builtin_definitions import BuiltinDefinitions
 def load_builtin_definitions() -> dict[str, Any]:
     """
     Load builtin definitions from BuiltinDefinitions class
-    
+
     Returns:
         Dictionary containing builtin schema definitions
     """
@@ -54,19 +54,19 @@ def resolve_schema_refs(schema: Any, definitions: dict[str, Any]) -> Any:
 def resolve_output_schema(output_schema: Any, user_definitions: dict[str, Any] | None = None) -> Any:
     """
     Resolve output schema with builtin and user definitions
-    
+
     Args:
         output_schema: The output schema to resolve
         user_definitions: Optional user-defined schema definitions
-        
+
     Returns:
         Resolved output schema with all $ref references resolved
     """
     if user_definitions is None:
         user_definitions = {}
-    
+
     # Load builtin definitions and merge with user definitions
     builtin_definitions = load_builtin_definitions()
     all_definitions = {**builtin_definitions, **user_definitions}
-    
+
     return resolve_schema_refs(output_schema, all_definitions)

@@ -2,12 +2,23 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "GoogleCloudStorageDatasource",
+            "name": "Agents",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/examples/google_cloud_storage/main.py",
-            "python": "${workspaceFolder}/.venv/bin/python",
-            "cwd": "${workspaceFolder}/examples/google_cloud_storage",
+            "program": "${workspaceFolder}/examples/agent/main.py",
+            "cwd": "${workspaceFolder}/examples/agent",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "GEVENT_SUPPORT": "True"
+            },
+        },
+        {
+            "name": "Tools",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/examples/google/main.py",
+            "cwd": "${workspaceFolder}/examples/google",
             "console": "integratedTerminal",
             "justMyCode": false,
             "env": {
@@ -15,12 +26,47 @@
             }
         },
         {
-            "name": "Github",
+            "name": "Model",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/examples/github/main.py",
-            "python": "${workspaceFolder}/.venv/bin/python",
-            "cwd": "${workspaceFolder}/examples/github",
+            "program": "${workspaceFolder}/examples/openai/main.py",
+            "cwd": "${workspaceFolder}/examples/openai",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "GEVENT_SUPPORT": "True"
+            }
+        },
+        {
+            "name": "BackwardsInvocation",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/examples/code_based_workflow/main.py",
+            "cwd": "${workspaceFolder}/examples/code_based_workflow",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "GEVENT_SUPPORT": "True"
+            }
+        },
+        {
+            "name": "Neko",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/examples/neko/main.py",
+            "cwd": "${workspaceFolder}/examples/neko",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "GEVENT_SUPPORT": "True"
+            }
+        },
+        {
+            "name": "KawaiiFilter",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/examples/kawaii_filter/main.py",
+            "cwd": "${workspaceFolder}/examples/kawaii_filter",
             "console": "integratedTerminal",
             "justMyCode": false,
             "env": {
