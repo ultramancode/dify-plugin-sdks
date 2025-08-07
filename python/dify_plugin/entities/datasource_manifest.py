@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
 from dify_plugin.core.documentation.schema_doc import docs
 from dify_plugin.core.utils.yaml_loader import load_yaml_file
+from dify_plugin.core.utils.schema_resolver import resolve_output_schema
 from dify_plugin.entities import (
     I18nObject,
     ParameterAutoGenerate,
@@ -14,123 +15,6 @@ from dify_plugin.entities import (
 from dify_plugin.entities.oauth import OAuthSchema
 from dify_plugin.entities.provider_config import CommonParameterType, ProviderConfig
 
-BUILTIN_DEFINITIONS = {
-    "file": {
-        "type": "object",
-        "properties": {
-            "dify_builtin_type": {
-                "type": "string",
-                "enum": ["File"],
-                "description": "Business type identifier for frontend",
-            },
-            "name": {"type": "string", "description": "file name"},
-            "size": {"type": "number", "description": "file size"},
-            "file_type": {"type": "string", "description": "file type"},
-            "extension": {"type": "string", "description": "file extension"},
-            "mime_type": {"type": "string", "description": "file mime type"},
-            "transfer_method": {"type": "string", "description": "file transfer method"},
-            "url": {"type": "string", "description": "file url"},
-            "related_id": {"type": "string", "description": "file related id"},
-        },
-        "required": ["name"],
-    },
-    "website_crawl": {
-        "type": "object",
-        "properties": {
-            "dify_builtin_type": {
-                "type": "string",
-                "enum": ["WebsiteCrawl"],
-                "description": "Business type identifier for frontend",
-            },
-            "source_url": {"type": "string", "description": "The URL of the crawled website"},
-            "content": {"type": "string", "description": "The content of the crawled website"},
-            "title": {"type": "string", "description": "The title of the crawled website"},
-            "description": {"type": "string", "description": "The description of the crawled website"},
-        },
-        "required": ["source_url", "content"],
-    },
-    "online_document": {
-        "type": "object",
-        "properties": {
-            "dify_builtin_type": {
-                "type": "string",
-                "enum": ["OnlineDocument"],
-                "description": "Business type identifier for frontend",
-            },
-            "workspace_id": {"type": "string", "description": "The ID of the workspace where the document is stored"},
-            "page_id": {"type": "string", "description": "The ID of the page in the document"},
-            "content": {"type": "string", "description": "The content of the online document"},
-        },
-        "required": ["content"],
-    },
-    "general_structure_chunk": {
-        "type": "object",
-        "properties": {
-            "dify_builtin_type": {
-                "type": "string",
-                "enum": ["GeneralStructureChunk"],
-                "description": "Business type identifier for frontend",
-            },
-            "general_chunks": {
-                "type": "array",
-                "items": {"type": "string"},
-                "description": "List of general content chunks",
-            },
-        },
-        "required": ["general_chunks"],
-    },
-    "parent_child_structure_chunk": {
-        "type": "object",
-        "properties": {
-            "dify_builtin_type": {
-                "type": "string",
-                "enum": ["ParentChildStructureChunk"],
-                "description": "Business type identifier for frontend",
-            },
-            "parent_mode": {"type": "string", "description": "The mode of parent-child relationship"},
-            "parent_child_chunks": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "parent_content": {"type": "string", "description": "The parent content"},
-                        "child_contents": {
-                            "type": "array",
-                            "items": {"type": "string"},
-                            "description": "List of child contents",
-                        },
-                    },
-                    "required": ["parent_content", "child_contents"],
-                },
-                "description": "List of parent-child chunk pairs",
-            },
-        },
-        "required": ["parent_mode", "parent_child_chunks"],
-    },
-    "qa_structure_chunk": {
-        "type": "object",
-        "properties": {
-            "dify_builtin_type": {
-                "type": "string",
-                "enum": ["QAStructureChunk"],
-                "description": "Business type identifier for frontend",
-            },
-            "qa_chunks": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "question": {"type": "string", "description": "The question"},
-                        "answer": {"type": "string", "description": "The answer"},
-                    },
-                    "required": ["question", "answer"],
-                },
-                "description": "List of question-answer pairs",
-            },
-        },
-        "required": ["qa_chunks"],
-    },
-}
 
 
 @docs(
@@ -306,9 +190,7 @@ class DatasourceProviderManifest(BaseModel):
                 file = load_yaml_file(datasource)
                 if "output_schema" in file:
                     user_definitions = file.get("definitions", {})
-                    all_definitions = {**BUILTIN_DEFINITIONS, **user_definitions}
-
-                    file["output_schema"] = _resolve_schema_refs(file["output_schema"], all_definitions)
+                    file["output_schema"] = resolve_output_schema(file["output_schema"], user_definitions)
                     file.pop("definitions", None)
 
                 datasources.append(DatasourceEntity(**file))
@@ -318,39 +200,3 @@ class DatasourceProviderManifest(BaseModel):
         return datasources
 
 
-def _resolve_schema_refs(schema: dict[str, Any], definitions: dict[str, Any]) -> dict[str, Any]:
-    """
-    Recursively resolve $ref references in a JSON schema
-
-    Args:
-        schema: The schema object that may contain $ref references
-        definitions: Available type definitions to resolve references against
-
-    Returns:
-        Schema with all $ref references resolved
-    """
-    if isinstance(schema, dict):
-        if "$ref" in schema:
-            # Resolve the reference
-            ref = schema["$ref"]
-            if ref.startswith("#/$defs/"):
-                type_name = ref.replace("#/$defs/", "")
-                if type_name in definitions:
-                    # Return the resolved definition (recursively resolve it too)
-                    return _resolve_schema_refs(definitions[type_name], definitions)
-                else:
-                    raise ValueError(f"Reference '{ref}' not found in definitions")
-            else:
-                raise ValueError(f"Unsupported reference format: {ref}")
-        else:
-            # Recursively resolve references in nested objects
-            resolved = {}
-            for key, value in schema.items():
-                resolved[key] = _resolve_schema_refs(value, definitions)
-            return resolved
-    elif isinstance(schema, list):
-        # Recursively resolve references in arrays
-        return [_resolve_schema_refs(item, definitions) for item in schema]
-    else:
-        # Return primitive values as-is
-        return schema
