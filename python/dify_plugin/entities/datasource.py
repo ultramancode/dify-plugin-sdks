@@ -104,8 +104,10 @@ class OnlineDriveFile(BaseModel):
     Online drive file
     """
 
-    key: str = Field(..., description="The key of the file")
-    size: int = Field(..., description="The size of the file")
+    id: str = Field(..., description="File ID")
+    name: str = Field(..., description="File name")
+    size: int = Field(..., description="File size")
+    type: str = Field(..., description="File type (folder/file)")
 
 
 class OnlineDriveFileBucket(BaseModel):
@@ -113,9 +115,10 @@ class OnlineDriveFileBucket(BaseModel):
     Online drive file bucket
     """
 
-    bucket: str | None = Field(..., description="The bucket of the file")
-    files: list[OnlineDriveFile] = Field(..., description="The files of the bucket")
-    is_truncated: bool = Field(..., description="Whether the bucket has more files")
+    bucket: str | None = Field(None, description="File bucket")
+    files: list[OnlineDriveFile] = Field(..., description="File contents")
+    is_truncated: bool = Field(..., description="Whether the result is truncated")
+    next_page_parameters: dict | None = Field(None, description="Parameters for fetching the next page")
 
 
 class OnlineDriveBrowseFilesRequest(BaseModel):
@@ -123,12 +126,10 @@ class OnlineDriveBrowseFilesRequest(BaseModel):
     Get online drive file list request
     """
 
-    prefix: str | None = Field(None, description="File path prefix for filtering eg: 'docs/dify/'")
-    bucket: str | None = Field(None, description="Storage bucket name")
-    max_keys: int = Field(20, description="Maximum number of files to return")
-    start_after: str | None = Field(
-        None, description="Pagination token for continuing from a specific file eg: 'docs/dify/1.txt'"
-    )
+    bucket: str | None = Field(None, description="File bucket")
+    prefix: str = Field(..., description="Parent ID")
+    max_keys: int = Field(20, description="Page size")
+    next_page_parameters: dict | None = Field(None, description="Parameters for fetching the next page")
 
 
 class OnlineDriveBrowseFilesResponse(BaseModel):
@@ -136,7 +137,7 @@ class OnlineDriveBrowseFilesResponse(BaseModel):
     Get online drive file list response
     """
 
-    result: list[OnlineDriveFileBucket] = Field(..., description="The bucket of the files")
+    result: list[OnlineDriveFileBucket] = Field(..., description="File list")
 
 
 class OnlineDriveDownloadFileRequest(BaseModel):
@@ -144,8 +145,8 @@ class OnlineDriveDownloadFileRequest(BaseModel):
     Get online drive file
     """
 
-    key: str = Field(..., description="The name of the file")
-    bucket: str | None = Field(None, description="The name of the bucket")
+    bucket: str | None = Field(None, description="File bucket")
+    id: str = Field(..., description="File ID")
 
 
 class DatasourceOAuthCredentials(BaseModel):
