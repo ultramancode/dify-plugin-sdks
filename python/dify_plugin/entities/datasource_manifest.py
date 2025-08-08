@@ -4,7 +4,6 @@ from typing import Any, Union
 from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
 from dify_plugin.core.documentation.schema_doc import docs
-from dify_plugin.core.utils.schema_resolver import resolve_output_schema
 from dify_plugin.core.utils.yaml_loader import load_yaml_file
 from dify_plugin.entities import (
     I18nObject,
@@ -187,11 +186,6 @@ class DatasourceProviderManifest(BaseModel):
                 raise ValueError("datasource path should be a string")
             try:
                 file = load_yaml_file(datasource)
-                if "output_schema" in file:
-                    user_definitions = file.get("definitions", {})
-                    file["output_schema"] = resolve_output_schema(file["output_schema"], user_definitions)
-                    file.pop("definitions", None)
-
                 datasources.append(DatasourceEntity(**file))
             except Exception as e:
                 raise ValueError(f"Error loading datasource configuration: {e!s}") from e

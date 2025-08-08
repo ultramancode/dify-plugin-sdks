@@ -10,7 +10,6 @@ from pydantic import (
 )
 
 from dify_plugin.core.documentation.schema_doc import docs
-from dify_plugin.core.utils.schema_resolver import resolve_output_schema
 from dify_plugin.core.utils.yaml_loader import load_yaml_file
 from dify_plugin.entities import I18nObject, ParameterOption
 from dify_plugin.entities.invoke_message import InvokeMessage
@@ -248,21 +247,13 @@ class ToolProviderConfiguration(BaseModel):
                 raise ValueError("tool path should be a string")
             try:
                 file = load_yaml_file(tool)
-
-                # Resolve output_schema references if present
-                output_schema = file.get("output_schema", None)
-                if output_schema:
-                    user_definitions = file.get("definitions", {})
-                    output_schema = resolve_output_schema(output_schema, user_definitions)
-                    file.pop("definitions", None)
-
                 tools.append(
                     ToolConfiguration(
                         identity=ToolIdentity(**file["identity"]),
                         parameters=[ToolParameter(**param) for param in file.get("parameters", []) or []],
                         description=ToolDescription(**file["description"]),
                         extra=ToolConfigurationExtra(**file.get("extra", {})),
-                        output_schema=output_schema,
+                        output_schema=file.get("output_schema", None),
                     )
                 )
             except Exception as e:
