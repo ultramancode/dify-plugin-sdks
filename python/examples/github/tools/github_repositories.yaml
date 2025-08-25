@@ -59,13 +59,3 @@ parameters:
     name: top_n
     required: true
     type: number
-
-output_schema:
-  type: object
-  properties:
-    result:
-      $ref: "#/$defs/file"
-    result2:
-      $ref: "#/$defs/website_crawl"
-    result3:
-      $ref: "#/$defs/online_document"
