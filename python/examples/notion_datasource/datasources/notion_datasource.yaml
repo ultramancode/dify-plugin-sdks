@@ -15,11 +15,6 @@ description:
 
 parameters:
 
-output_schema:
-  type: object
-  properties:
-    result:
-      $ref: "#/$defs/online_document"
 extra:
   python:
     source: datasources/notion_datasource.py
