@@ -27,11 +27,11 @@ class NotionDataSource(OnlineDocumentDatasource):
         access_token = self.runtime.credentials.get("integration_secret")
         if not access_token:
             raise ValueError("Access token not found in credentials")
-        workspace_name = self.notion_workspace_name(access_token)
-        workspace_icon = ""
-        workspace_id = datasource_parameters.get("tenant_id", "")
+        workspace_name = self.notion_workspace_info(access_token).get("workspace_name", "")
+        workspace_icon = self.runtime.credentials.get("workspace_icon") or ""
         notion_client = NotionClient(access_token)
         pages = notion_client.get_authorized_pages()
+        workspace_id = self.runtime.credentials.get("workspace_id") or ""
         online_document_info = OnlineDocumentInfo(
             workspace_name=workspace_name,
             workspace_icon=workspace_icon,
@@ -62,7 +62,7 @@ class NotionDataSource(OnlineDocumentDatasource):
         yield self.create_variable_message("page_id", online_document_res["page_id"])
         yield self.create_variable_message("workspace_id", online_document_res["workspace_id"])
 
-    def notion_workspace_name(self, access_token: str):
+    def notion_workspace_info(self, access_token: str):
         headers = {
             "Authorization": f"Bearer {access_token}",
             "Notion-Version": self._API_VERSION,
@@ -72,6 +72,9 @@ class NotionDataSource(OnlineDocumentDatasource):
         if "object" in response_json and response_json["object"] == "user":
             user_type = response_json["type"]
             user_info = response_json[user_type]
-            if user_info.get("workspace_name"):
-                return user_info["workspace_name"]
-        return "workspace"
+            return {
+                "workspace_name": user_info.get("workspace_name", ""),
+                "workspace_icon": user_info.get("workspace_icon", ""),
+                "workspace_id": user_info.get("workspace_id", ""),
+            }
+        return {}
