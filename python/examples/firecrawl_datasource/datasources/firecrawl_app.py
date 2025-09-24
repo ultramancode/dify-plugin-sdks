@@ -39,7 +39,7 @@ class FirecrawlApp:
             headers = self._prepare_headers()
         for i in range(retries):
             try:
-                response = requests.request(method, url, json=data, headers=headers)
+                response = requests.request(method, url, json=data, headers=headers, timeout=30)
                 return response.json()
             except requests.exceptions.RequestException:
                 if i < retries - 1:
@@ -81,7 +81,7 @@ class FirecrawlApp:
         response = self._request("POST", endpoint, data, headers)
         if response is None:
             raise HTTPError("Failed to initiate crawl after multiple retries")
-        elif response.get("success") == False:
+        elif not response.get("success"):
             raise HTTPError(f"Failed to crawl: {response.get('error')}")
         job_id: str = response["id"]
         if wait:
@@ -92,9 +92,7 @@ class FirecrawlApp:
         endpoint = f"{self.base_url}/v1/crawl/{job_id}"
         response = self._request("GET", endpoint)
         if response is None:
-            raise HTTPError(
-                f"Failed to check status for job {job_id} after multiple retries"
-            )
+            raise HTTPError(f"Failed to check status for job {job_id} after multiple retries")
         return response
 
     def cancel_crawl_job(self, job_id: str):
@@ -114,9 +112,7 @@ class FirecrawlApp:
                 raise HTTPError(f"Job {job_id} failed: {status['error']}")
             time.sleep(poll_interval)
 
-    def format_crawl_status_response(
-        self, status: str, crawl_status_response: dict[str, Any]
-    ) -> dict[str, Any]:
+    def format_crawl_status_response(self, status: str, crawl_status_response: dict[str, Any]) -> dict[str, Any]:
         data = crawl_status_response.get("data", [])
         url_data_list = []
         for item in data:
@@ -152,6 +148,6 @@ def get_json_params(tool_parameters: dict[str, Any], key):
             # support both single quotes and double quotes
             param = param.replace("'", '"')
             param = json.loads(param)
-        except Exception:
-            raise ValueError(f"Invalid {key} format.")
+        except Exception as e:
+            raise ValueError(f"Invalid {key} format.") from e
         return param

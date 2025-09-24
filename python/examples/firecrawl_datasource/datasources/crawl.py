@@ -1,17 +1,17 @@
 import time
-from collections.abc import Generator
-from typing import Any, Mapping
+from collections.abc import Generator, Mapping
+from typing import Any
 
-from dify_plugin.entities.datasource import (
-    WebSiteInfo,
-    WebSiteInfoDetail,
-    WebsiteCrawlMessage,
-)
-from dify_plugin.interfaces.datasource.website import WebsiteCrawlDatasource
-from dify_plugin.errors.tool import ToolProviderCredentialValidationError
+from datasources.firecrawl_app import FirecrawlApp, get_array_params
 from requests import HTTPError
 
-from datasources.firecrawl_app import FirecrawlApp, get_array_params, get_json_params
+from dify_plugin.entities.datasource import (
+    WebsiteCrawlMessage,
+    WebSiteInfo,
+    WebSiteInfoDetail,
+)
+from dify_plugin.errors.tool import ToolProviderCredentialValidationError
+from dify_plugin.interfaces.datasource.website import WebsiteCrawlDatasource
 
 
 class CrawlDatasource(WebsiteCrawlDatasource):
@@ -32,41 +32,26 @@ class CrawlDatasource(WebsiteCrawlDatasource):
         try:
             app = FirecrawlApp(
                 api_key=self.runtime.credentials.get("firecrawl_api_key"),
-                base_url=self.runtime.credentials.get("base_url")
-                or "https://api.firecrawl.dev",
+                base_url=self.runtime.credentials.get("base_url") or "https://api.firecrawl.dev",
             )
 
             crawl_sub_pages = datasource_parameters.get("crawl_subpages", True)
 
-            scrapeOptions = {
-                "onlyMainContent": datasource_parameters.get("only_main_content", True)
-            }
-            scrapeOptions = {
-                k: v for k, v in scrapeOptions.items() if v not in (None, "")
-            }
+            scrape_options = {"onlyMainContent": datasource_parameters.get("only_main_content", True)}
+            scrape_options = {k: v for k, v in scrape_options.items() if v not in (None, "")}
 
             payload = {
-                "excludePaths": get_array_params(datasource_parameters, "exclude_paths")
-                if crawl_sub_pages
-                else [],
-                "includePaths": get_array_params(datasource_parameters, "include_paths")
-                if crawl_sub_pages
-                else [],
-                "maxDepth": datasource_parameters.get("max_depth")
-                if crawl_sub_pages
-                else None,
-                "limit": 1
-                if not crawl_sub_pages
-                else datasource_parameters.get("limit", 5),
-                "scrapeOptions": scrapeOptions or None,
+                "excludePaths": get_array_params(datasource_parameters, "exclude_paths") if crawl_sub_pages else [],
+                "includePaths": get_array_params(datasource_parameters, "include_paths") if crawl_sub_pages else [],
+                "maxDepth": datasource_parameters.get("max_depth") if crawl_sub_pages else None,
+                "limit": 1 if not crawl_sub_pages else datasource_parameters.get("limit", 5),
+                "scrapeOptions": scrape_options or None,
             }
             payload = {k: v for k, v in payload.items() if v not in (None, "")}
 
             crawl_res = WebSiteInfo(web_info_list=[], status="", total=0, completed=0)
 
-            _crawl_result = app.crawl_url(
-                url=datasource_parameters["url"], wait=False, **payload
-            )
+            _crawl_result = app.crawl_url(url=datasource_parameters["url"], wait=False, **payload)
             job_id = _crawl_result["id"]
             crawl_res.status = "processing"
             print(crawl_res)
@@ -91,7 +76,7 @@ class CrawlDatasource(WebsiteCrawlDatasource):
                     time.sleep(5)
 
         except Exception as e:
-            raise ValueError(f"An error occurred: {str(e)}")
+            raise ValueError(f"An error occurred: {e!s}") from e
 
     @staticmethod
     def _process_completed_job(app: FirecrawlApp, status: dict, crawl_res: WebSiteInfo):
